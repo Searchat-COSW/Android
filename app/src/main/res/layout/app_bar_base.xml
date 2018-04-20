@@ -62,6 +62,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
         app:elevation="0dp"
-        app:srcCompat="@mipmap/add" />
+        app:srcCompat="@drawable/ic_plus" />
 
 </android.support.design.widget.CoordinatorLayout>
