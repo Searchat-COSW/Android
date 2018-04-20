@@ -6,5 +6,9 @@
 
     <string name="action_search">Search</string>
 
+    <!-- Toolbar -->
+    <string name="all">ALL</string>
+    <string name="owned">OWNED</string>
+    <string name="joined">JOINED</string>
 
 </resources>
