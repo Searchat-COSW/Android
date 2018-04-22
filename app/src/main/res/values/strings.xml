@@ -6,9 +6,12 @@
 
     <string name="action_search">Search</string>
 
-    <!-- Toolbar -->
+    <!-- Toolbar / PagerAdapter -->
     <string name="all">ALL</string>
     <string name="owned">OWNED</string>
     <string name="joined">JOINED</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
