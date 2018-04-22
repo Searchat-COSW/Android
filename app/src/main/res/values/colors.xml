@@ -3,4 +3,5 @@
     <color name="colorPrimary">#85393d</color>
     <color name="colorPrimaryDark">#85393D</color>
     <color name="colorAccent">#FFFFFF</color>
+    <color name="colorEventCost">#2FDD1A</color>
 </resources>

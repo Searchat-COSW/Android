@@ -1,9 +1,9 @@
-package cosw.eci.edu.android.entities;
+package cosw.eci.edu.android.data.entities;
 
 import java.util.Date;
 import java.util.List;
 
-public class Activity {
+public class Event {
     private int id;
     private String name;
     private String description;
@@ -12,13 +12,13 @@ public class Activity {
     private String location;
     private Date date;
     private List<User> participants;
-    private String price;
+    private Long price;
 
 
     private String exactLocation;
     private String image;
 
-    public Activity(int id, String name, String description, User administrator, List<Lenguage> lenguages, String location, Date date, List<User> participants, String price, String exactLocation, String image) {
+    public Event(int id, String name, String description, User administrator, List<Lenguage> lenguages, String location, Date date, List<User> participants, Long price, String exactLocation, String image) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -96,11 +96,11 @@ public class Activity {
         this.participants = participants;
     }
 
-    public String getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 

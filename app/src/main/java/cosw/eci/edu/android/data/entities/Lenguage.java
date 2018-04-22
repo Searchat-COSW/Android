@@ -1,4 +1,4 @@
-package cosw.eci.edu.android.entities;
+package cosw.eci.edu.android.data.entities;
 
 public class Lenguage {
     private String lenguage;

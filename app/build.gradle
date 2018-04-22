@@ -37,4 +37,6 @@ dependencies {
     //cards display
     implementation 'com.android.support:cardview-v7:26.1.+'
     implementation 'com.android.support:recyclerview-v7:26.1.+'
+    //picasso
+    implementation "com.squareup.picasso:picasso:2.4.0"
 }

@@ -21,9 +21,9 @@
         android:padding="10dp">
 
         <ImageView
-            android:id="@+id/logo"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/event_row_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             tools:src="@mipmap/ic_launcher" />
 
@@ -35,7 +35,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/event_row_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="150dp"
@@ -45,10 +45,10 @@
                 tools:text="Name ..........................................." />
 
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/event_row_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="150dp"
+                android:maxWidth="100dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 tools:text="Date ........." />
@@ -56,7 +56,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/event_row_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -64,9 +64,10 @@
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:gravity="right"
+            android:maxLines="1"
             android:textColor="@android:color/black"
             android:textSize="14sp"
-            tools:text="Price ............" />
+            tools:text="Price ......................................." />
 
     </LinearLayout>
 

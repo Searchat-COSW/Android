@@ -1,4 +1,4 @@
-package cosw.eci.edu.android.entities;
+package cosw.eci.edu.android.data.entities;
 
 import java.util.ArrayList;
 import java.util.List;

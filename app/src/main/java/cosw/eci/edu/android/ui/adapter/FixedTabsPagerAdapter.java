@@ -1,14 +1,14 @@
-package cosw.eci.edu.android.ui;
+package cosw.eci.edu.android.ui.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import cosw.eci.edu.android.ListAllFragment;
-import cosw.eci.edu.android.ListJoinedFragment;
-import cosw.eci.edu.android.ListOwnedFragment;
 import cosw.eci.edu.android.R;
+import cosw.eci.edu.android.ui.fragment.ListAllFragment;
+import cosw.eci.edu.android.ui.fragment.ListJoinedFragment;
+import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
 
 public class FixedTabsPagerAdapter extends FragmentPagerAdapter {
 

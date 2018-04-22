@@ -1,4 +1,4 @@
-package cosw.eci.edu.android;
+package cosw.eci.edu.android.ui.activity;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TableLayout;
 
-import cosw.eci.edu.android.ui.FixedTabsPagerAdapter;
+import cosw.eci.edu.android.R;
+import cosw.eci.edu.android.ui.adapter.FixedTabsPagerAdapter;
+import cosw.eci.edu.android.ui.fragment.ListAllFragment;
+import cosw.eci.edu.android.ui.fragment.ListJoinedFragment;
+import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
 
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
