@@ -51,11 +51,11 @@ public class ListJoinedFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ListAllFragment.
+     * @return A new instance of fragment ListJoinedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListAllFragment newInstance(String param1, String param2) {
-        ListAllFragment fragment = new ListAllFragment();
+    public static ListJoinedFragment newInstance(String param1, String param2) {
+        ListJoinedFragment fragment = new ListJoinedFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -76,7 +76,7 @@ public class ListJoinedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_list_all, container,    false);
+        rootView = inflater.inflate(R.layout.fragment_list_joined, container,    false);
 
         configureRecyclerView();
         return rootView;
@@ -92,7 +92,7 @@ public class ListJoinedFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof ListAllFragment.OnFragmentInteractionListener) {
+        if (context instanceof ListJoinedFragment.OnFragmentInteractionListener) {
             mListener = (ListJoinedFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
@@ -123,7 +123,7 @@ public class ListJoinedFragment extends Fragment {
 
     private void configureRecyclerView(){
         eventAdapter = new EventAdapter(events,getActivity());
-        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_list );
+        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_joined );
         recyclerView.setHasFixedSize( true );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getContext() );
         recyclerView.setLayoutManager( layoutManager );

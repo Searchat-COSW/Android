@@ -52,11 +52,11 @@ public class ListOwnedFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ListAllFragment.
+     * @return A new instance of fragment ListOwnedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListAllFragment newInstance(String param1, String param2) {
-        ListAllFragment fragment = new ListAllFragment();
+    public static ListOwnedFragment newInstance(String param1, String param2) {
+        ListOwnedFragment fragment = new ListOwnedFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -97,7 +97,7 @@ public class ListOwnedFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof ListAllFragment.OnFragmentInteractionListener) {
+        if (context instanceof ListOwnedFragment.OnFragmentInteractionListener) {
             mListener = (ListOwnedFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
@@ -128,7 +128,7 @@ public class ListOwnedFragment extends Fragment {
 
     private void configureRecyclerView(){
         eventAdapter = new EventAdapter(events,getActivity());
-        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_list );
+        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_owned );
         recyclerView.setHasFixedSize( true );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getContext() );
         recyclerView.setLayoutManager( layoutManager );
