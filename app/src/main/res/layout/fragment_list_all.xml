@@ -6,7 +6,7 @@
     tools:context=".ui.fragment.ListAllFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_all"
+        android:id="@+id/recycler_view_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />

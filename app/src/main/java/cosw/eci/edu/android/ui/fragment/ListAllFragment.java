@@ -127,7 +127,7 @@ public class ListAllFragment extends Fragment {
 
     private void configureRecyclerView(){
         eventAdapter = new EventAdapter(events,getActivity());
-        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_all );
+        recyclerView = (RecyclerView) rootView.findViewById( R.id.recycler_view_list );
         recyclerView.setHasFixedSize( true );
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getContext() );
         recyclerView.setLayoutManager( layoutManager );
