@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.ui.adapter.FixedTabsPagerAdapter;
@@ -35,15 +36,16 @@ public class BaseActivity extends AppCompatActivity
 
     //acces token key
     private String accessToken;
+    private String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         //ask if he has already logged in
         SharedPreferences sharedPref = getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-        String defaultValue = getResources().getString(R.string.default_access_token);
+        String defaultValue = getResources().getString(R.string.default_access);
         accessToken = sharedPref.getString(getString(R.string.saved_access_token), defaultValue);
-        if(accessToken == getResources().getString(R.string.default_access_token)){
+        if(accessToken == getResources().getString(R.string.default_access)){
             //login for the first time
             Intent intent = new Intent(this, LoginActivity.class);
             //Start the new activity using the intent.
@@ -51,6 +53,8 @@ public class BaseActivity extends AppCompatActivity
             //delete the current activity from the stack
             finish();
         }
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,6 +83,13 @@ public class BaseActivity extends AppCompatActivity
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+
+
+        //settingup the username
+        username = sharedPref.getString(getString(R.string.saved_username),defaultValue);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsernameView  = (TextView) headerView.findViewById(R.id.nav_header_username);
+        navUsernameView.setText(username);
     }
 
     @Override
