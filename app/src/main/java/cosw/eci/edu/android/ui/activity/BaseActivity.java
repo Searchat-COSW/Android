@@ -1,5 +1,8 @@
 package cosw.eci.edu.android.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,11 +33,25 @@ public class BaseActivity extends AppCompatActivity
                     ListJoinedFragment.OnFragmentInteractionListener {
 
 
-
+    //acces token key
+    private String accessToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        //ask if he has already logged in
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String defaultValue = getResources().getString(R.string.default_access_token);
+        accessToken = sharedPref.getString(getString(R.string.saved_access_token), defaultValue);
+        if(accessToken == getResources().getString(R.string.default_access_token)){
+            //login for the first time
+            Intent intent = new Intent(this, LoginActivity.class);
+            //Start the new activity using the intent.
+            startActivity(intent);
+            //delete the current activity from the stack
+            finish();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
