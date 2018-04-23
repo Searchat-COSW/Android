@@ -28,6 +28,8 @@
     </string>
     <string name="saved_access_token">Saved_token</string>
     <string name="default_access_token">No_access</string>
+    
+    <string name="shared_preferences">Shared_preferences</string>
 
 
 

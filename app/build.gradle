@@ -32,8 +32,10 @@ dependencies {
     implementation 'com.j256.ormlite:ormlite-android:5.0'
 
     //retrieving data from the API using Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.2.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.okhttp:okhttp:2.4.0'
+    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
     //cards display
     implementation 'com.android.support:cardview-v7:26.1.+'
     implementation 'com.android.support:recyclerview-v7:26.1.+'

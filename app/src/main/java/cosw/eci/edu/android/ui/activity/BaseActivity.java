@@ -40,7 +40,7 @@ public class BaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         //ask if he has already logged in
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
         String defaultValue = getResources().getString(R.string.default_access_token);
         accessToken = sharedPref.getString(getString(R.string.saved_access_token), defaultValue);
         if(accessToken == getResources().getString(R.string.default_access_token)){

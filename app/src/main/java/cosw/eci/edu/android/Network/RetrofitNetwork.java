@@ -4,6 +4,7 @@ package cosw.eci.edu.android.Network;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -23,9 +24,18 @@ public class RetrofitNetwork implements Network {
 
     public RetrofitNetwork()
     {
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
+                .writeTimeout(5, TimeUnit.MINUTES)
+                .build();
+
+
         Retrofit retrofit =
-                new Retrofit.Builder().baseUrl( BASE_URL ).addConverterFactory( GsonConverterFactory.create() ).build();
+                new Retrofit.Builder().baseUrl( BASE_URL ).client(okHttpClient).addConverterFactory( GsonConverterFactory.create() ).build();
         networkService = retrofit.create( NetworkService.class );
+
     }
 
     @Override
@@ -37,6 +47,7 @@ public class RetrofitNetwork implements Network {
             public void run()
             {
                 Call<Token> call = networkService.login( loginWrapper );
+
                 try
                 {
                     Response<Token> execute = call.execute();

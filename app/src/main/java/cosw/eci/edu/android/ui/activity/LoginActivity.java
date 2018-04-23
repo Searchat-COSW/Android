@@ -202,10 +202,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         public void run() {
                             if (response != null) {
                                 showProgress(false);
-                                SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences sharedPref = activity.getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString(getString(R.string.saved_access_token), response.getAccessToken());
                                 editor.commit();
+
+
                                 retrofitNetwork.addSecureTokenInterceptor(response.getAccessToken());
                                 //login for the first time
                                 Intent intent = new Intent(activity, BaseActivity.class);
@@ -236,7 +238,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 0;
     }
 
     /**
