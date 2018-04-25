@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +82,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         this.activity = this;
         retrofitNetwork = new RetrofitNetwork();
+        //signUp button
+        Button signUp = (Button) findViewById(R.id.signUpButton);
+        signUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSignUpForm();
+            }
+        });
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.username);
         populateAutoComplete();
@@ -107,6 +117,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    private void openSignUpForm() {
+        //create the intent
+        //login for the first time
+        Intent intent = new Intent(this, SignUpActivity.class);
+        //Start the new activity using the intent.
+        startActivity(intent);
+        //delete the current activity from the stack
+
     }
 
     private void populateAutoComplete() {
