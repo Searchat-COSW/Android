@@ -45,6 +45,9 @@
     <string name="signup_err_email">The Email must contain -@- and -.-</string>
     <string name="signup_err_cant_add_user">Ups, cant create a new user.</string>
     <string name="signup_err_username_already_created">Username already created</string>
+    <!-- Strings profile user-->
+    <string name="editProfile">Edit profile</string>
+    <string name="signOut">Sign Out</string>
 
 
 </resources>
