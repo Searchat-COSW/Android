@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         this.activity = this;
         retrofitNetwork = new RetrofitNetwork();
+
         //signUp button
         Button signUp = (Button) findViewById(R.id.signUpButton);
         signUp.setOnClickListener(new OnClickListener() {

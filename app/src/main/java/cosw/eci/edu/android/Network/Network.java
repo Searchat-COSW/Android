@@ -7,6 +7,8 @@ public interface Network {
 
     void createUser(User user, RequestCallback<Boolean> requestCallback);
 
+    void getUser(String username, RequestCallback<User> requestCallback);
+
 
     interface RequestCallback<T>
     {

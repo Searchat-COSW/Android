@@ -1,5 +1,6 @@
 package cosw.eci.edu.android.ui.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,9 +20,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import cosw.eci.edu.android.Network.Network;
+import cosw.eci.edu.android.Network.NetworkException;
+import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
+import cosw.eci.edu.android.data.entities.User;
 import cosw.eci.edu.android.ui.adapter.FixedTabsPagerAdapter;
 import cosw.eci.edu.android.ui.fragment.ListAllFragment;
 import cosw.eci.edu.android.ui.fragment.ListJoinedFragment;
@@ -34,18 +43,32 @@ public class BaseActivity extends AppCompatActivity
                     ListJoinedFragment.OnFragmentInteractionListener {
 
 
+    NavigationView navigationView;
+    private String defaultValue;
+
     //acces token key
     private String accessToken;
     private String username;
+
+    //local memory
+    SharedPreferences sharedPref;
+
+    //Network
+    private RetrofitNetwork retrofitNetwork;
+
+    private Activity activity;
+    //User data
+    private User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        activity = this;
         //ask if he has already logged in
-        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-        String defaultValue = getResources().getString(R.string.default_access);
+        sharedPref = getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
+        defaultValue = getResources().getString(R.string.default_access);
         accessToken = sharedPref.getString(getString(R.string.saved_access_token), defaultValue);
-        if(accessToken == getResources().getString(R.string.default_access)){
+        if(accessToken.equals( getResources().getString(R.string.default_access))){
             //login for the first time
             Intent intent = new Intent(this, LoginActivity.class);
             //Start the new activity using the intent.
@@ -53,6 +76,11 @@ public class BaseActivity extends AppCompatActivity
             //delete the current activity from the stack
             finish();
         }
+
+
+        //user is already loggin
+        retrofitNetwork = new RetrofitNetwork();
+
 
 
 
@@ -74,7 +102,7 @@ public class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         //ViewPager section
@@ -85,11 +113,54 @@ public class BaseActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
 
-        //settingup the username
+        //settingup the nav_header
+
+        setUpUsername();
+    }
+
+    private void setUpUsername(){
         username = sharedPref.getString(getString(R.string.saved_username),defaultValue);
-        View headerView = navigationView.getHeaderView(0);
-        TextView navUsernameView  = (TextView) headerView.findViewById(R.id.nav_header_username);
-        navUsernameView.setText(username);
+        if(!username.equals(defaultValue)) {
+            View headerView = navigationView.getHeaderView(0);
+            TextView navUsernameView = (TextView) headerView.findViewById(R.id.nav_header_username);
+            navUsernameView.setText(username);
+
+            retrofitNetwork.getUser(username, new Network.RequestCallback<User>() {
+                @Override
+                public void onSuccess(User response) {
+                    user = response;
+                    if (user != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                View headerView = navigationView.getHeaderView(0);
+                                TextView navUserRealNameView = (TextView) headerView.findViewById(R.id.nav_header_real_name);
+                                navUserRealNameView.setText(user.getFirstname() + " " + user.getLastname());
+                                TextView navUserEmailView = (TextView) headerView.findViewById(R.id.nav_header_email);
+                                navUserEmailView.setText(user.getEmail());
+                                final ImageView image = (ImageView) headerView.findViewById(R.id.nav_header_image);
+                                Picasso.with(activity).load(RetrofitNetwork.BASE_URL+"user/"+username+"/image").into(image, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                    }
+
+                                    @Override
+                                    public void onError() {
+                                        image.setImageResource(R.drawable.no_user);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailed(NetworkException e) {
+                    //
+                }
+            });
+        }
     }
 
     @Override

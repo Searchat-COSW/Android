@@ -13,8 +13,8 @@ public class Event {
     private Date date;
     private List<User> participants;
     private Long price;
-
-
+    private Long longitude;
+    private Long latitude;
     private String exactLocation;
     private String image;
 
@@ -28,6 +28,22 @@ public class Event {
         this.date = date;
         this.participants = participants;
         this.price = price;
+        this.exactLocation = exactLocation;
+        this.image = image;
+    }
+
+    public Event(int id, String name, String description, User administrator, List<Lenguage> lenguages, String location, Date date, List<User> participants, Long price, Long longitude, Long latitude, String exactLocation, String image) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.administrator = administrator;
+        this.lenguages = lenguages;
+        this.location = location;
+        this.date = date;
+        this.participants = participants;
+        this.price = price;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.exactLocation = exactLocation;
         this.image = image;
     }
@@ -120,6 +136,22 @@ public class Event {
         this.image = image;
     }
 
+    public Long getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Long longitude) {
+        this.longitude = longitude;
+    }
+
+    public Long getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Long latitude) {
+        this.latitude = latitude;
+    }
+
     @Override
     public String toString() {
         return "Activity{" +
@@ -131,7 +163,9 @@ public class Event {
                 ", location='" + location + '\'' +
                 ", date=" + date +
                 ", participants=" + participants +
-                ", price='" + price + '\'' +
+                ", price=" + price +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
                 ", exactLocation='" + exactLocation + '\'' +
                 ", image='" + image + '\'' +
                 '}';
