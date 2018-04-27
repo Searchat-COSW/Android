@@ -51,6 +51,9 @@
 
     <!-- String for profile information edit -->
     <string name="profile_information_name">Name</string>
-
+    <string name="profile_information_last_name">Lastname</string>
+    <string name="profile_information_about_you">About you</string>
+    
+    
 
 </resources>
