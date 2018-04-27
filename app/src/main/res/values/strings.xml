@@ -53,7 +53,16 @@
     <string name="profile_information_name">Name</string>
     <string name="profile_information_last_name">Lastname</string>
     <string name="profile_information_about_you">About you</string>
-    
-    
+    <string-array name="lenguages">
+        <item>Spanish</item>
+        <item>English</item>
+        <item>Mandarin</item>
+        <item>Portuguese</item>
+        <item>Russian</item>
+        <item>Japanese</item>
+        <item>Italian</item>
+        <item>German</item>
+        <item>French</item>
+    </string-array>
 
 </resources>
