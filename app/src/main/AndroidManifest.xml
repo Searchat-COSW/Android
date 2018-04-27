@@ -29,7 +29,9 @@
         <activity
             android:name=".ui.activity.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".ui.activity.SignUpActivity"></activity>
+        <activity android:name=".ui.activity.SignUpActivity" />
+        <activity android:name=".ui.activity.EditProfileInformationActivity"
+            android:parentActivityName=".ui.activity.BaseActivity"></activity>
     </application>
 
 </manifest>

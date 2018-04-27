@@ -1,6 +1,8 @@
 package cosw.eci.edu.android.data.entities;
 
-public class Lenguage {
+import java.io.Serializable;
+
+public class Lenguage implements Serializable{
     private String lenguage;
 
     public Lenguage(String lenguage) {

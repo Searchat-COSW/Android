@@ -43,6 +43,8 @@ public class BaseActivity extends AppCompatActivity
                     ListJoinedFragment.OnFragmentInteractionListener {
 
 
+    public static String PASS_USER = "pass_user";
+    public static String PASS_USER_OBJECT = "pass_user_object";
     NavigationView navigationView;
     private String defaultValue;
 
@@ -202,7 +204,11 @@ public class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_editProfile) {
-            // Handle the camera action
+            Intent intent = new Intent(this, EditProfileInformationActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(BaseActivity.PASS_USER_OBJECT,user);
+            intent.putExtra(BaseActivity.PASS_USER,bundle);
+            startActivity(intent);
         } else if (id == R.id.nav_signOut) {
 
         }

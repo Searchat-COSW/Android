@@ -1,9 +1,10 @@
 package cosw.eci.edu.android.data.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileInformation {
+public class ProfileInformation implements Serializable{
 
     private String username;
 

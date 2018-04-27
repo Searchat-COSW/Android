@@ -1,6 +1,8 @@
 package cosw.eci.edu.android.data.entities;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable{
 
     private String email;
 
