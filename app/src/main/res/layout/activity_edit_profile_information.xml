@@ -25,6 +25,7 @@
             android:src="@drawable/no_user" />
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/image_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -94,15 +95,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/nationality_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
             android:editable="false"
+            android:gravity="center"
             android:text="TextView" />
 
         <Button
@@ -110,22 +112,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Nationality" />
+            android:background="@color/colorAccent"
+            android:text="Nationality"
+            android:textColor="@color/cardview_light_background" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/lenguages_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_weight="1"
             android:editable="false"
+            android:gravity="center"
             android:text="TextView" />
 
         <Button
@@ -133,7 +138,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Lenguages" />
+            android:background="@color/colorAccent"
+            android:text="Lenguages"
+            android:textColor="@color/cardview_light_background" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="@string/save_profile"
+            android:textColor="@color/cardview_light_background" />
+    </RelativeLayout>
 
 </LinearLayout>

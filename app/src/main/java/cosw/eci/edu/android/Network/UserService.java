@@ -18,5 +18,7 @@ public interface UserService {
     @GET("user/{username}")
     Call<User> getUser(@Path("username") String username);
 
+    @POST("user/update/{username}")
+    Call<Boolean> updateUser(@Path("username") String username, @Body User user);
 
 }

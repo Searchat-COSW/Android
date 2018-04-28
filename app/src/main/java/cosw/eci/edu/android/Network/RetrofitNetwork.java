@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitNetwork implements Network {
 
-    public static final String BASE_URL = "http://10.2.67.54:8080/";
+    public static final String BASE_URL ="http://10.2.67.54:8080/";
 
     private UserService userService;
     //private EventService eventService;
@@ -95,6 +95,26 @@ public class RetrofitNetwork implements Network {
 
                 try{
                     Response<User> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void updateUser(final User user,final RequestCallback<Boolean> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<Boolean> call = userService.updateUser(user.getUsername(), user );
+
+                try{
+                    Response<Boolean> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
 
                 }catch ( Exception e )

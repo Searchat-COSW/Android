@@ -9,6 +9,8 @@ public interface Network {
 
     void getUser(String username, RequestCallback<User> requestCallback);
 
+    void updateUser(User user, RequestCallback<Boolean> requestCallback);
+
 
     interface RequestCallback<T>
     {
