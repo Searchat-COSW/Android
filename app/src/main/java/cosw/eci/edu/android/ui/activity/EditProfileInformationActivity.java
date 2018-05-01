@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -17,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.FitWindowsViewGroup;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -26,6 +30,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +44,9 @@ import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Lenguage;
 import cosw.eci.edu.android.data.entities.User;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class EditProfileInformationActivity extends AppCompatActivity {
 
@@ -74,12 +82,37 @@ public class EditProfileInformationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_information);
+
         context=this;
         retrofitNetwork = new RetrofitNetwork();
         Intent intent = getIntent();
         //Obtain the object
         user=(User) intent.getBundleExtra(BaseActivity.PASS_USER).getSerializable(BaseActivity.PASS_USER_OBJECT);
 
+        retrofitNetwork.getUser(user.getUsername(), new Network.RequestCallback<User>() {
+            @Override
+            public void onSuccess(User response) {
+                user = response;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initComponents();
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onFailed(NetworkException e){
+
+                finish();
+            }
+        });
+
+    }
+
+    private void initComponents() {
         image = (ImageView) findViewById(R.id.image);
         imageButton = (FloatingActionButton) findViewById(R.id.image_button);
         saveButton = (Button) findViewById(R.id.save_button);
@@ -104,6 +137,7 @@ public class EditProfileInformationActivity extends AppCompatActivity {
         lastName = (TextView) findViewById(R.id.last_name);
         nationalityValue = (TextView) findViewById(R.id.nationality_value);
         lenguagesValue = (TextView) findViewById(R.id.lenguages_value);
+
         aboutYou = (TextView) findViewById(R.id.about_you);
         name.setText(user.getFirstname());
         lastName.setText(user.getLastname());
@@ -229,6 +263,39 @@ public class EditProfileInformationActivity extends AppCompatActivity {
                         finish();//for the moment
                     }
                 });
+                //uploading the image
+                try {
+                    //create a new file
+                    File imageFile = createImageFile();
+                    //save the image in the file
+                    BitmapDrawable draw = (BitmapDrawable) image.getDrawable();
+                    Bitmap bitmap = draw.getBitmap();
+                    FileOutputStream outStream = null;
+                    File sdCard = Environment.getExternalStorageDirectory();
+                    outStream = new FileOutputStream(imageFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    outStream.flush();
+                    outStream.close();
+                    // create RequestBody instance from file
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
+                    MultipartBody.Part body =
+                            MultipartBody.Part.createFormData("uploaded_file", imageFile.getName(), requestFile);
+
+                    retrofitNetwork.updateImageUser(user.getUsername(), body, new Network.RequestCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean response) {
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailed(NetworkException e) {
+                            finish();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }

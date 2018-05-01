@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import cosw.eci.edu.android.data.entities.User;
 import okhttp3.Interceptor;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -17,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitNetwork implements Network {
 
-    public static final String BASE_URL ="http://10.2.67.54:8080/";
+    public static final String BASE_URL = "https://searchat.herokuapp.com/";//"http://10.2.67.54:8080/";
 
     private UserService userService;
     //private EventService eventService;
@@ -99,7 +100,7 @@ public class RetrofitNetwork implements Network {
 
                 }catch ( Exception e )
                 {
-                    requestCallback.onFailed( new NetworkException( null, e ) );
+                    requestCallback.onFailed( new NetworkException( e ) );
                 }
 
             }
@@ -113,6 +114,25 @@ public class RetrofitNetwork implements Network {
             public void run() {
                 Call<Boolean> call = userService.updateUser(user.getUsername(), user );
 
+                try{
+                    Response<Boolean> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void updateImageUser(final String username, final MultipartBody.Part file, final  RequestCallback<Boolean> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<Boolean> call = userService.updateImageUser(username,file);
                 try{
                     Response<Boolean> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );

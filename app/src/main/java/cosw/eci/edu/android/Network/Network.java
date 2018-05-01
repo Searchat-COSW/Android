@@ -1,6 +1,7 @@
 package cosw.eci.edu.android.Network;
 
 import cosw.eci.edu.android.data.entities.User;
+import okhttp3.MultipartBody;
 
 public interface Network {
     void login( LoginWrapper loginWrapper, RequestCallback<Token> requestCallback );
@@ -10,6 +11,8 @@ public interface Network {
     void getUser(String username, RequestCallback<User> requestCallback);
 
     void updateUser(User user, RequestCallback<Boolean> requestCallback);
+
+    void updateImageUser(String username, MultipartBody.Part file, RequestCallback<Boolean> requestCallback);
 
 
     interface RequestCallback<T>
