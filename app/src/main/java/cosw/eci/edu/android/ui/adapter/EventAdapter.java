@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
 
@@ -50,7 +51,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         else{
             holder.price.setText("$"+event.getPrice().toString());
         }
-        Picasso.with(activity).load(event.getImage()).into(holder.image);
+        //Picasso.with(activity).load(event.getImage()).into(holder.image);
+        Picasso.with(activity).load(RetrofitNetwork.BASE_URL+"/activity/"+event.getId()+"/image").into(holder.image);
 
 
 
