@@ -105,7 +105,7 @@
             android:layout_weight="1"
             android:editable="false"
             android:gravity="center"
-            android:text="TextView" />
+            android:text="Choose..." />
 
         <Button
             android:id="@+id/nationality"
@@ -129,10 +129,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_gravity="fill"
+            android:layout_gravity="center"
             android:gravity="center"
             android:singleLine="false"
-            android:text="Testing" />
+            android:text="Choose..." />
 
         <Button
             android:id="@+id/lenguages"
