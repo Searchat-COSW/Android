@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,6 +13,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,6 +53,8 @@ import cosw.eci.edu.android.ui.adapter.EventAdapter;
  */
 public class ListAllFragment extends Fragment {
 
+    private final static int REQUEST_CODE_FOR_LOCATION = 18;
+    private final static int GPS_INTENT = 60;
     //view params
     private View rootView;
     private RecyclerView recyclerView;
@@ -57,8 +62,8 @@ public class ListAllFragment extends Fragment {
     private RetrofitNetwork retrofitNetwork;
 
     //for location
-    private FusedLocationProviderClient mFusedLocationClient;
-
+    private LocationManager locationManager;
+    private LocationListener locationListener;
     //app params
     private Context context;
     private List<Event> events;
@@ -87,6 +92,7 @@ public class ListAllFragment extends Fragment {
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,47 +100,49 @@ public class ListAllFragment extends Fragment {
         retrofitNetwork = new RetrofitNetwork();
 
         //obtain the location
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            System.out.println("--------------------------------------");
-                            //Clean the string
-                            String cityLocation = getCityNameByLocation(location);
-                            cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
-                            cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
-                            cityLocation = cityLocation.toLowerCase();
-                            System.out.println(cityLocation);
-                            System.out.println("--------------------------------------");
-                            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
-                                @Override
-                                public void onSuccess(List<Event> response) {
-                                    events = response;
-                                }
-
-                                @Override
-                                public void onFailed(NetworkException e) {
-                                    getActivity().finish();
-                                }
-                            });
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        checkLocationPermissons();
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    System.out.println("--------------------------------------");
+                    //Clean the string
+                    String cityLocation = getCityNameByLocation(location);
+                    cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
+                    cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
+                    cityLocation = cityLocation.toLowerCase();
+                    System.out.println(cityLocation);
+                    System.out.println("--------------------------------------");
+                    locationManager.removeUpdates(locationListener);
+                    retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+                        @Override
+                        public void onSuccess(List<Event> response) {
+                            events = response;
                         }
-                    }
-                });
+
+                        @Override
+                        public void onFailed(NetworkException e) {
+                            getActivity().finish();
+                        }
+                    });
+                }
 
 
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {
+
+
+            }
+
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
         /*events.add(new Event(1,"Monserrate",null,null,
                 null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
@@ -146,6 +154,42 @@ public class ListAllFragment extends Fragment {
                 null,null,new Date(30000),null,new Long(40000),null,"https://static.iris.net.co/semana/upload/images/2014/9/24/403969_145933_1.jpg"));*/
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_FOR_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkLocationPermissons();
+                }
+                return;
+        }
+    }
+
+
+    public void checkLocationPermissons(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+            }, REQUEST_CODE_FOR_LOCATION);
+        }
+        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, GPS_INTENT);
+        }
+
+
+    }
+
+    @Override
+     public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode){
+            case GPS_INTENT:
+                checkLocationPermissons();
+                return;
+        }
+    }
+
 
     private String getCityNameByLocation(Location location) {
         String fnialAddress ="";
@@ -160,6 +204,23 @@ public class ListAllFragment extends Fragment {
         } catch (IOException e) {}
         catch (NullPointerException e) {}
         return fnialAddress;
+    }
+
+
+    private Location getBestLastKnownLocation() {
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     @Override
