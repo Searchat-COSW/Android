@@ -2,10 +2,12 @@ package cosw.eci.edu.android.Network;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import cosw.eci.edu.android.data.entities.Event;
 import cosw.eci.edu.android.data.entities.User;
 import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
@@ -21,7 +23,7 @@ public class RetrofitNetwork implements Network {
     public static final String BASE_URL = "https://searchat.herokuapp.com/";//"http://10.2.67.54:8080/";
 
     private UserService userService;
-    //private EventService eventService;
+    private EventService eventService;
 
     private ExecutorService backgroundExecutor = Executors.newFixedThreadPool( 1 );
 
@@ -38,6 +40,7 @@ public class RetrofitNetwork implements Network {
         Retrofit retrofit =
                 new Retrofit.Builder().baseUrl( BASE_URL ).client(okHttpClient).addConverterFactory( GsonConverterFactory.create() ).build();
         userService = retrofit.create( UserService.class );
+        eventService = retrofit.create(EventService.class);
 
     }
 
@@ -140,6 +143,44 @@ public class RetrofitNetwork implements Network {
                 }catch ( Exception e )
                 {
                     requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void getAllEvents(final RequestCallback<List<Event>> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<List<Event>> call = eventService.getAllEvents();
+                try{
+                    Response<List<Event>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( e ) );
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void getEventsByLocation(final String location, final RequestCallback<List<Event>> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<List<Event>> call = eventService.getEventsByLocation(location);
+                try{
+                    Response<List<Event>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( e ) );
                 }
 
             }

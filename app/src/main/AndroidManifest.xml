@@ -2,19 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cosw.eci.edu.android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false"></uses-feature>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/sc"
@@ -41,5 +28,15 @@
             android:parentActivityName=".ui.activity.BaseActivity" />
         <activity android:name=".ui.activity.CreateNewEventActivity"></activity>
     </application>
+
+
+    <uses-feature android:name="android.hardware.camera" android:required="false">
+    </uses-feature>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <!-- Location permisson -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- Get Internet access-->
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
