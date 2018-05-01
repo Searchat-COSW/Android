@@ -187,6 +187,44 @@ public class RetrofitNetwork implements Network {
         });
     }
 
+    @Override
+    public void getEventsOwned(final String username, final RequestCallback<List<Event>> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<List<Event>> call = eventService.getEventsOwned(username);
+                try{
+                    Response<List<Event>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( e ) );
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void getEventsJoined(final String username, final RequestCallback<List<Event>> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<List<Event>> call = eventService.getEventsJoined(username);
+                try{
+                    Response<List<Event>> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( e ) );
+                }
+
+            }
+        });
+    }
+
 
     public void addSecureTokenInterceptor( final String token )
     {

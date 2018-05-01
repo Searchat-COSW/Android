@@ -25,6 +25,10 @@ public interface Network {
 
     void getEventsByLocation(String location,RequestCallback<List<Event>> requestCallback);
 
+    void getEventsOwned(String username,RequestCallback<List<Event>> requestCallback);
+
+    void getEventsJoined(String username,RequestCallback<List<Event>> requestCallback);
+
 
 
 

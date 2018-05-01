@@ -1,6 +1,7 @@
 package cosw.eci.edu.android.ui.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,8 @@ import java.util.List;
 import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
+import cosw.eci.edu.android.ui.activity.BaseActivity;
+import cosw.eci.edu.android.ui.activity.ShowEventActivity;
 
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
@@ -41,7 +44,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Event event = events.get(position);
-
+        holder.event = event;
         holder.name.setText(event.getName()); //title.setText(movie.getTitle());
         holder.date.setText(event.getDate().toString());
         if(event.getPrice().intValue()<=0){
@@ -52,7 +55,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             holder.price.setText("$"+event.getPrice().toString());
         }
         //Picasso.with(activity).load(event.getImage()).into(holder.image);
-        Picasso.with(activity).load(RetrofitNetwork.BASE_URL+"/activity/"+event.getId()+"/image").into(holder.image);
+        Picasso.with(activity).load(RetrofitNetwork.BASE_URL+"activity/"+event.getId()+"/image").into(holder.image);
 
 
 
@@ -69,6 +72,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         TextView date;
         TextView price;
         ImageView image;
+        Event event;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -77,6 +81,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
             name = (TextView) itemView.findViewById(R.id.event_row_name);
             date = (TextView) itemView.findViewById(R.id.event_row_date);
             price = (TextView) itemView.findViewById(R.id.event_row_price);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    //login for the first time
+                    Intent intent = new Intent(activity, ShowEventActivity.class);
+                    intent.putExtra(ShowEventActivity.EVENT_OBJECT,event);
+                    //Start the new activity using the intent.
+                    activity.startActivity(intent);
+                }
+            });
         }
 
     }

@@ -1,8 +1,21 @@
 package cosw.eci.edu.android.ui.fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +23,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import cosw.eci.edu.android.Network.Network;
+import cosw.eci.edu.android.Network.NetworkException;
+import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
 import cosw.eci.edu.android.ui.adapter.EventAdapter;
@@ -29,6 +48,9 @@ import cosw.eci.edu.android.ui.adapter.EventAdapter;
  */
 public class ListJoinedFragment extends Fragment {
 
+    private final static int REQUEST_CODE_FOR_LOCATION = 19;
+    private final static int GPS_INTENT = 61;
+
     //view params
     private View rootView;
     private RecyclerView recyclerView;
@@ -37,6 +59,13 @@ public class ListJoinedFragment extends Fragment {
     //app params
     private Context context;
     private List<Event> events;
+
+    //for location
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location location;
+    private ListJoinedFragment fragment;
+    private RetrofitNetwork retrofitNetwork;
 
 
     private ListJoinedFragment.OnFragmentInteractionListener mListener;
@@ -61,24 +90,79 @@ public class ListJoinedFragment extends Fragment {
         return fragment;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        events = new ArrayList<>();
-        events.add(new Event(1,"Monserrate",null,null,
-                null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
-        events.add(new Event(2,"Candelaria",null,null,
-                null,null,new Date(200000),null,new Long(10000000),null,"https://media.wsimag.com/attachments/c4701fa97eaae33ac66d3712332a65486569ac44/store/fill/1090/613/aeed32aade2ea76cb5c6d22be74e255b21c9fa092353fc9f077676a60bc3/Bogota-Colombia-Barrio-de-La-Candelaria.jpg"));
+        retrofitNetwork = new RetrofitNetwork();
+        // Define a listener that responds to location updates
+        fragment = this;
+        //obtain the location
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    fragment.location = location;
+                    //Clean the string
+                    String cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCleanString(cityLocation);
+                    locationManager.removeUpdates(locationListener);
+                    //get username
+                    String defaultValue = getResources().getString(R.string.default_access);
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
+                    String username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
+                    //consult  by username
+                    retrofitNetwork.getEventsJoined(username,new Network.RequestCallback<List<Event>>() {
+                        @Override
+                        public void onSuccess(List<Event> response) {
+                            events = response;
+                            if(events == null) events = new ArrayList<>();
+                            events.add(new Event(1,"Monserrate",null,null,
+                                    null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    configureRecyclerView();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(NetworkException e) {
+                            System.out.println(e.getMessage()+ "---------------");
+                            for(StackTraceElement el : e.getStackTrace()){
+                                System.out.println(el.toString());
+                            }
+                            //getActivity().finish();
+                        }
+                    });
+                }
+
+
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {
+
+
+            }
+
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         rootView = inflater.inflate(R.layout.fragment_list_joined, container,    false);
+        if (events!=null) configureRecyclerView();
 
-        configureRecyclerView();
         return rootView;
     }
 
@@ -128,5 +212,26 @@ public class ListJoinedFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getContext() );
         recyclerView.setLayoutManager( layoutManager );
         recyclerView.setAdapter(eventAdapter);
+    }
+
+
+    private String getCityNameByLocation(Location location) {
+        String fnialAddress ="";
+        Geocoder geoCoder = new Geocoder(getActivity(), Locale.getDefault()); //it is Geocoder
+        try {
+            List<Address> address = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+            fnialAddress = address.get(0).getSubAdminArea(); //This is the complete address.
+        } catch (IOException e) {}
+        catch (NullPointerException e) {}
+        return fnialAddress;
+    }
+
+    @NonNull
+    private String getCleanString(String cityLocation) {
+        cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
+        cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
+        cityLocation = cityLocation.toLowerCase();
+        return cityLocation;
     }
 }

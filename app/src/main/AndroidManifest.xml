@@ -2,6 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cosw.eci.edu.android">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"></uses-feature>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Location permisson -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Get Internet access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/sc"
@@ -26,17 +37,8 @@
         <activity
             android:name=".ui.activity.EditProfileInformationActivity"
             android:parentActivityName=".ui.activity.BaseActivity" />
-        <activity android:name=".ui.activity.CreateNewEventActivity"></activity>
+        <activity android:name=".ui.activity.CreateNewEventActivity" />
+        <activity android:name=".ui.activity.ShowEventActivity"></activity>
     </application>
-
-
-    <uses-feature android:name="android.hardware.camera" android:required="false">
-    </uses-feature>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-    <!-- Location permisson -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- Get Internet access-->
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

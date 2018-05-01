@@ -64,6 +64,8 @@ public class ListAllFragment extends Fragment {
     //for location
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Location location;
+    private ListAllFragment fragment;
     //app params
     private Context context;
     private List<Event> events;
@@ -96,6 +98,7 @@ public class ListAllFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fragment = this;
         events = new ArrayList<>();
         retrofitNetwork = new RetrofitNetwork();
 
@@ -106,22 +109,15 @@ public class ListAllFragment extends Fragment {
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (location != null) {
-                    System.out.println("--------------------------------------");
+                    fragment.location = location;
                     //Clean the string
                     String cityLocation = getCityNameByLocation(location);
-                    cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
-                    cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
-                    cityLocation = cityLocation.toLowerCase();
-                    System.out.println(cityLocation);
-                    System.out.println("--------------------------------------");
+                    cityLocation = getCleanString(cityLocation);
                     locationManager.removeUpdates(locationListener);
                     retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
                         @Override
                         public void onSuccess(List<Event> response) {
                             events = response;
-                            System.out.println(events == null);
-                            System.out.println(response == null);
-                            System.out.println(response);
                             if(events == null) events = new ArrayList<>();
                             events.add(new Event(1,"Monserrate",null,null,
                                     null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
@@ -168,6 +164,16 @@ public class ListAllFragment extends Fragment {
 
     }
 
+    @NonNull
+    private String getCleanString(String cityLocation) {
+        cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
+        cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
+        cityLocation = cityLocation.toLowerCase();
+        System.out.println(cityLocation);
+        System.out.println("--------------------------------------");
+        return cityLocation;
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -180,7 +186,7 @@ public class ListAllFragment extends Fragment {
     }
 
 
-    public void checkLocationPermissons(){
+    private void checkLocationPermissons(){
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,

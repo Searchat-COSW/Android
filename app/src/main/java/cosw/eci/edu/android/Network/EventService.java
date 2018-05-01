@@ -18,4 +18,10 @@ public interface EventService {
 
     @GET( "activity/location/{location}" )
     Call<List<Event>> getEventsByLocation(@Path("location") String location);
+
+    @GET( "activity/owned/{username}" )
+    Call<List<Event>> getEventsOwned(@Path("username") String username);
+
+    @GET( "activity/joined/{username}" )
+    Call<List<Event>> getEventsJoined(@Path("username") String username);
 }

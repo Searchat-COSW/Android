@@ -1,9 +1,10 @@
 package cosw.eci.edu.android.data.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Event {
+public class Event implements Serializable{
     private int id;
     private String name;
     private String description;
