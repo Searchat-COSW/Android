@@ -74,6 +74,7 @@
     <string name="new_event_description">Description</string>
     <string name="new_event_date">Date</string>
     <string name="new_event_price">Price</string>
-
+    <string name="title_activity_maps">Map</string>
+    <string name="new_event_ubication">Ubication</string>
 
 </resources>

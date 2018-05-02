@@ -123,6 +123,7 @@ public class EditProfileInformationActivity extends AppCompatActivity {
                 onClickAddPhoto(view);
             }
         });
+
         Picasso.with(context).load(RetrofitNetwork.BASE_URL+"user/"+user.getUsername()+"/image").into(image, new Callback() {
             @Override
             public void onSuccess() {
