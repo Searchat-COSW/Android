@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginHorizontal="30dp"
     android:orientation="vertical"
     tools:context="cosw.eci.edu.android.ui.activity.SignUpActivity">
 
@@ -47,6 +48,7 @@
                 android:textColorHighlight="@color/colorPrimary"
                 android:textColorHint="@color/colorPrimary"
                 android:textColorLink="@color/colorPrimary" />
+
             <AutoCompleteTextView
                 android:id="@+id/last_name"
                 android:layout_width="match_parent"
@@ -58,6 +60,7 @@
                 android:textColorHighlight="@color/colorPrimary"
                 android:textColorHint="@color/colorPrimary"
                 android:textColorLink="@color/colorPrimary" />
+
             <AutoCompleteTextView
                 android:id="@+id/email"
                 android:layout_width="match_parent"
