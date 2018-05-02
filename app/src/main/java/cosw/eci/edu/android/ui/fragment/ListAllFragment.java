@@ -23,10 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -219,7 +215,7 @@ public class ListAllFragment extends Fragment {
                 System.out.println(a);
             }
 
-            fnialAddress = address.get(0).getSubAdminArea(); //This is the complete address.
+            fnialAddress = address.get(0).getLocality(); //This is the complete address.
         } catch (IOException e) {}
         catch (NullPointerException e) {}
         return fnialAddress;

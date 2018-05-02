@@ -73,6 +73,7 @@
     <string name="new_event_name">Name</string>
     <string name="new_event_description">Description</string>
     <string name="new_event_date">Date</string>
+    <string name="new_event_price">Price</string>
 
 
 </resources>

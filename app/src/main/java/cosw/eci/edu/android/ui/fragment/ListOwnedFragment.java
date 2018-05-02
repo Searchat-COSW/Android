@@ -210,7 +210,7 @@ public class ListOwnedFragment extends Fragment {
         try {
             List<Address> address = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 
-            fnialAddress = address.get(0).getSubAdminArea(); //This is the complete address.
+            fnialAddress = address.get(0).getLocality(); //This is the complete address.
         } catch (IOException e) {}
         catch (NullPointerException e) {}
         return fnialAddress;

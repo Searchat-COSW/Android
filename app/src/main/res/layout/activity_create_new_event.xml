@@ -9,6 +9,32 @@
     android:layout_marginHorizontal="30dp"
     tools:context="cosw.eci.edu.android.ui.activity.EditProfileInformationActivity">
 
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:paddingTop="@dimen/nav_header_vertical_spacing_image"
+            android:src="@drawable/no_image" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/image_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:clickable="true"
+            app:layout_anchor="@+id/image"
+            app:layout_anchorGravity="right|bottom"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
+    </android.support.design.widget.CoordinatorLayout>
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
+
         <EditText
             android:id="@+id/description"
             android:layout_width="match_parent"
@@ -36,32 +63,62 @@
             android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/date"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/pick_date"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:layout_gravity="center"
-        android:textColor="@color/cardview_light_background"
-        android:text="Pick date" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/pick_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:layout_gravity="center"
-        android:textColor="@color/cardview_light_background"
-        android:text="Pick time" />
-    
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginVertical="10dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/pick_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:text="Pick date"
+                android:textColor="@color/cardview_light_background" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_marginVertical="10dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/pick_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/colorAccent"
+                android:text="Pick time"
+                android:textColor="@color/cardview_light_background" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,6 +148,33 @@
     </LinearLayout>
 
 
+    <!--MAP!!!!!!!!!!!!1
 
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:context=".ui.activity.CreateNewEventActivity" />
+    -->
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="30dp">
+
+        <EditText
+            android:id="@+id/price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_audiotrack_light"
+            android:hint="@string/new_event_price"
+            android:inputType="number"
+            android:singleLine="true"
+            android:text="0" />
+    </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>
