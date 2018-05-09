@@ -1,6 +1,7 @@
 package cosw.eci.edu.android.ui.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -12,11 +13,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -44,6 +47,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,7 +56,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import cosw.eci.edu.android.Network.Network;
+import cosw.eci.edu.android.Network.NetworkException;
+import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
+import cosw.eci.edu.android.data.entities.Event;
+import cosw.eci.edu.android.data.entities.Lenguage;
+import cosw.eci.edu.android.data.entities.User;
 
 public class CreateNewEventActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private int mYear, mMonth, mDay, mHour, mMinute;
@@ -59,25 +70,40 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
     private TextView lenguagesValue;
     private String[] listLenaguages;
     private boolean[] listLeanguagesChose;
-    ArrayList<Integer> mLenguagesItems = new ArrayList<>();
+    private ArrayList<Integer> mLenguagesItems = new ArrayList<>();
     private Context context;
     private FloatingActionButton ubication;
     private TextView ubicationValue;
+    private TextView name;
+    private TextView description;
+    private double longitude;
+    private double latitude;
     private ImageView image;
+    private TextView price;
     private SupportMapFragment mapFragment;
+    private User user;
+    private String location;
     private GoogleMap googleMap;
     private FloatingActionButton imageButton;
+    private Button saveButton;
     public static final int REQUEST_IMAGE_CAPTURE = 256;
     public static final int SELECT_IMAGE = 285;
     //for camera intent
     private Uri imageUri;
     private final CharSequence[] dialogItems = {"Take picture", "Select picture"};
 
+    private RetrofitNetwork retrofitNetwork;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_event);
+        saveButton = (Button) findViewById(R.id.save_button);
         image = (ImageView) findViewById(R.id.image);
+        retrofitNetwork = new RetrofitNetwork();
+        name = (TextView) findViewById(R.id.name);
+        price = (TextView) findViewById(R.id.price);
+        description = (TextView) findViewById(R.id.description);
         imageButton = (FloatingActionButton) findViewById(R.id.image_button);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,9 +218,9 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                 builder.setMultiChoiceItems(listLenaguages, listLeanguagesChose, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int index, boolean isChecked) {
-
                         if (isChecked) {
-                            if (!mLenguagesItems.contains(index)) mLenguagesItems.add(index);
+                            if (!mLenguagesItems.contains(index)) {mLenguagesItems.add(index);}
+
                             else {
                                 try {
                                     mLenguagesItems.remove(index);
@@ -237,7 +263,9 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                     if (!addresses.isEmpty()) {
                         googleMap.clear();
                         Address exactUbicaion = addresses.get(0);
-                        System.out.println("Lugar "+ exactUbicaion);
+                        location = exactUbicaion.getLocality();
+                        longitude = exactUbicaion.getLongitude();
+                        latitude = exactUbicaion.getLatitude();
                         Location targetLocation = new Location(ubicationValue.getText().toString());//provider name is unnecessary
                         targetLocation.setLatitude(exactUbicaion.getLatitude());
                         targetLocation.setLongitude(exactUbicaion.getLongitude());
@@ -249,6 +277,47 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
             }
         });
 
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View view) {
+                Intent intent = getIntent();
+                //Obtain the object
+                user=(User) intent.getBundleExtra(BaseActivity.PASS_USER).getSerializable(BaseActivity.PASS_USER_OBJECT);
+                List<Lenguage> lenguagesList = new ArrayList<>();
+                for (int i =0 ; i< mLenguagesItems.size();i++){
+                    lenguagesList.add(new Lenguage(listLenaguages[mLenguagesItems.get(i)]));
+                }
+                String[] dateList = textViewDate.getText().toString().split("-");
+                String[] timeList = textViewDate.getText().toString().split(":");
+
+                String h = timeList[0].length()==2 ? timeList[0]:"0"+timeList[0];
+                String m = timeList[1].length()==2 ? timeList[1]:"0"+timeList[1];
+
+                String activityDate = dateList[2]+"-"+dateList[1]+"-"+dateList[0]+" " + textViewTime.getText().toString();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime dateEvent = LocalDateTime.parse(activityDate, formatter);
+                Long priceEvent =  new Long(price.getText().toString());
+                System.out.println(dateEvent.toString());
+                Event newEvent = new Event(name.getText().toString(),description.getText().toString(),user,lenguagesList,location,dateEvent,new ArrayList<User>(), priceEvent, longitude,latitude,null);
+                retrofitNetwork.createEvent(newEvent, new Network.RequestCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean response) {
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailed(NetworkException e) {
+                        System.out.println(e.getStackTrace());
+                    }
+                });
+            }
+        });
+
+    }
+
+    public int toInt(String s){
+        return Integer.parseInt(s);
     }
 
     private void addMarkerAndZoom(Location location, String title, int zoom) {
@@ -379,5 +448,7 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
     }
+
+
 
 }

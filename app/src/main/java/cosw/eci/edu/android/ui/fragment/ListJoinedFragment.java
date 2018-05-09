@@ -118,8 +118,7 @@ public class ListJoinedFragment extends Fragment {
                         public void onSuccess(List<Event> response) {
                             events = response;
                             if(events == null) events = new ArrayList<>();
-                            events.add(new Event(1,"Monserrate",null,null,
-                                    null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
+
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

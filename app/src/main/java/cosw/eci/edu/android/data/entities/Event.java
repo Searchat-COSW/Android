@@ -1,6 +1,7 @@
 package cosw.eci.edu.android.data.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -11,30 +12,17 @@ public class Event implements Serializable{
     private User administrator;
     private List<Lenguage> lenguages;
     private String location;
-    private Date date;
+    private LocalDateTime date;
     private List<User> participants;
     private Long price;
-    private Long longitude;
-    private Long latitude;
+    private double longitude;
+    private double latitude;
     private String exactLocation;
     private String image;
 
-    public Event(int id, String name, String description, User administrator, List<Lenguage> lenguages, String location, Date date, List<User> participants, Long price, String exactLocation, String image) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.administrator = administrator;
-        this.lenguages = lenguages;
-        this.location = location;
-        this.date = date;
-        this.participants = participants;
-        this.price = price;
-        this.exactLocation = exactLocation;
-        this.image = image;
-    }
 
-    public Event(int id, String name, String description, User administrator, List<Lenguage> lenguages, String location, Date date, List<User> participants, Long price, Long longitude, Long latitude, String exactLocation, String image) {
-        this.id = id;
+
+    public Event(String name, String description, User administrator, List<Lenguage> lenguages, String location, LocalDateTime date, List<User> participants, Long price, double longitude, double latitude, String image) {
         this.name = name;
         this.description = description;
         this.administrator = administrator;
@@ -45,7 +33,6 @@ public class Event implements Serializable{
         this.price = price;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.exactLocation = exactLocation;
         this.image = image;
     }
 
@@ -97,11 +84,11 @@ public class Event implements Serializable{
         this.location = location;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -137,7 +124,7 @@ public class Event implements Serializable{
         this.image = image;
     }
 
-    public Long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -145,7 +132,7 @@ public class Event implements Serializable{
         this.longitude = longitude;
     }
 
-    public Long getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 

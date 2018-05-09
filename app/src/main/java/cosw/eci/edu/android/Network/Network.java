@@ -29,6 +29,8 @@ public interface Network {
 
     void getEventsJoined(String username,RequestCallback<List<Event>> requestCallback);
 
+    void createEvent(Event event,RequestCallback<Boolean> requestCallback);
+
 
 
 

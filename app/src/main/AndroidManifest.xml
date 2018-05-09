@@ -37,7 +37,8 @@
         <activity
             android:name=".ui.activity.EditProfileInformationActivity"
             android:parentActivityName=".ui.activity.BaseActivity" />
-        <activity android:name=".ui.activity.CreateNewEventActivity" />
+        <activity android:name=".ui.activity.CreateNewEventActivity"
+            android:parentActivityName=".ui.activity.BaseActivity" />/>
         <activity android:name=".ui.activity.ShowEventActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

@@ -23,4 +23,9 @@ public class Lenguage implements Serializable{
                 "lenguage='" + lenguage + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.lenguage.equals(((Lenguage) obj).getLenguage());
+    }
 }

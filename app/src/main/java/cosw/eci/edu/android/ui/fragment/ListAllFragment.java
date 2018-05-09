@@ -115,14 +115,6 @@ public class ListAllFragment extends Fragment {
                         public void onSuccess(List<Event> response) {
                             events = response;
                             if(events == null) events = new ArrayList<>();
-                            events.add(new Event(1,"Monserrate",null,null,
-                                    null,null,new Date(20000),null,new Long(0),null,"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Monserrate_Sanctuary.JPG/1200px-Monserrate_Sanctuary.JPG"));
-                            events.add(new Event(2,"Candelaria",null,null,
-                                    null,null,new Date(200000),null,new Long(10000000),null,"https://media.wsimag.com/attachments/c4701fa97eaae33ac66d3712332a65486569ac44/store/fill/1090/613/aeed32aade2ea76cb5c6d22be74e255b21c9fa092353fc9f077676a60bc3/Bogota-Colombia-Barrio-de-La-Candelaria.jpg"));
-                            events.add(new Event(3,"Mi casa",null,null,
-                                    null,null,new Date(50),null,new Long(0),null,"https://i.pinimg.com/originals/ac/32/6a/ac326afab46ea50c9abbd8650e1cca3a.jpg"));
-                            events.add(new Event(4,"Transmilenio trip",null,null,
-                                    null,null,new Date(30000),null,new Long(40000),null,"https://static.iris.net.co/semana/upload/images/2014/9/24/403969_145933_1.jpg"));
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

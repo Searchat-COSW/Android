@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingTop="10dp"
     android:orientation="vertical"
-    tools:context="cosw.eci.edu.android.ui.activity.EditProfileInformationActivity">
+    tools:context="cosw.eci.edu.android.ui.activity.CreateNewEventActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -219,6 +219,17 @@
                 android:layout_marginVertical="10dp"
                 android:layout_weight="1"
                 tools:context=".ui.activity.CreateNewEventActivity" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:text="Save"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/cardview_light_background" />
 
         </LinearLayout>
     </ScrollView>
