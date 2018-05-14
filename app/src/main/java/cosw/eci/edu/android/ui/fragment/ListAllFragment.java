@@ -51,6 +51,7 @@ public class ListAllFragment extends Fragment {
 
     private final static int REQUEST_CODE_FOR_LOCATION = 18;
     private final static int GPS_INTENT = 60;
+    public static boolean NEED_TO_UPDATE = false;
     //view params
     private View rootView;
     private RecyclerView recyclerView;
@@ -62,6 +63,7 @@ public class ListAllFragment extends Fragment {
     private LocationListener locationListener;
     private Location location;
     private ListAllFragment fragment;
+    private String cityLocation;
     //app params
     private Context context;
     private List<Event> events;
@@ -107,7 +109,7 @@ public class ListAllFragment extends Fragment {
                 if (location != null) {
                     fragment.location = location;
                     //Clean the string
-                    String cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCityNameByLocation(location);
                     cityLocation = getCleanString(cityLocation);
                     locationManager.removeUpdates(locationListener);
                     retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
@@ -157,8 +159,7 @@ public class ListAllFragment extends Fragment {
         cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
         cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
         cityLocation = cityLocation.toLowerCase();
-        System.out.println(cityLocation);
-        System.out.println("--------------------------------------");
+
         return cityLocation;
     }
 
@@ -285,5 +286,37 @@ public class ListAllFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getContext() );
         recyclerView.setLayoutManager( layoutManager );
         recyclerView.setAdapter(eventAdapter);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NEED_TO_UPDATE){
+            NEED_TO_UPDATE = false;
+            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+                @Override
+                public void onSuccess(List<Event> response) {
+                    events = response;
+                    if(events == null) events = new ArrayList<>();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            configureRecyclerView();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(NetworkException e) {
+                    System.out.println(e.getMessage()+ "---------------");
+                    for(StackTraceElement el : e.getStackTrace()){
+                        System.out.println(el.toString());
+                    }
+                    //getActivity().finish();
+                }
+            });
+
+        }
     }
 }

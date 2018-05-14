@@ -26,5 +26,5 @@ public interface EventService {
     Call<List<Event>> getEventsJoined(@Path("username") String username);
 
     @POST( "activity/create")
-    Call<Boolean> createEvent(@Body Event event);
+    Call<Event> createEvent(@Body Event event);
 }

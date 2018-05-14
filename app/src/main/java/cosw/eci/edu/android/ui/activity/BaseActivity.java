@@ -225,4 +225,9 @@ public class BaseActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

@@ -46,6 +46,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.Normalizer;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,6 +66,8 @@ import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
 import cosw.eci.edu.android.data.entities.Lenguage;
 import cosw.eci.edu.android.data.entities.User;
+import cosw.eci.edu.android.ui.fragment.ListAllFragment;
+import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
 
 public class CreateNewEventActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private int mYear, mMonth, mDay, mHour, mMinute;
@@ -179,7 +184,7 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                                         + (monthOfYear + 1) + "-" + year);
                             }
                         }, mYear, mMonth, mDay);
-                dpd.getDatePicker().setMinDate(System.currentTimeMillis());
+                dpd.getDatePicker().setMinDate(System.currentTimeMillis() - 10000);
                 dpd.show();
             }
         });
@@ -289,31 +294,68 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                     lenguagesList.add(new Lenguage(listLenaguages[mLenguagesItems.get(i)]));
                 }
                 String[] dateList = textViewDate.getText().toString().split("-");
-                String[] timeList = textViewDate.getText().toString().split(":");
+                String[] timeList = textViewTime.getText().toString().split(":");
 
                 String h = timeList[0].length()==2 ? timeList[0]:"0"+timeList[0];
                 String m = timeList[1].length()==2 ? timeList[1]:"0"+timeList[1];
 
                 String activityDate = dateList[2]+"-"+dateList[1]+"-"+dateList[0]+" " + textViewTime.getText().toString();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                LocalDateTime dateEvent = LocalDateTime.parse(activityDate, formatter);
+
                 Long priceEvent =  new Long(price.getText().toString());
-                System.out.println(dateEvent.toString());
-                Event newEvent = new Event(name.getText().toString(),description.getText().toString(),user,lenguagesList,location,dateEvent,new ArrayList<User>(), priceEvent, longitude,latitude,null);
-                retrofitNetwork.createEvent(newEvent, new Network.RequestCallback<Boolean>() {
+
+
+
+
+                Event newEvent = new Event(name.getText().toString(),description.getText().toString(),user,lenguagesList,getCleanString(location),formatDate(textViewDate.getText().toString())+" "+formatTime(textViewTime.getText().toString()),new ArrayList<User>(), priceEvent, longitude,latitude,null);
+                System.out.println(newEvent);
+                retrofitNetwork.createEvent(newEvent, new Network.RequestCallback<Event>() {
                     @Override
-                    public void onSuccess(Boolean response) {
+                    public void onSuccess(Event response) {
+                        ListAllFragment.NEED_TO_UPDATE = true;
+                        ListOwnedFragment.NEED_TO_UPDATE = true;
                         finish();
                     }
 
                     @Override
                     public void onFailed(NetworkException e) {
-                        System.out.println(e.getStackTrace());
+                        System.out.println(e.getMessage());
+                        for(int i=0;i<e.getStackTrace().length;i++){
+                            System.out.println(e.getStackTrace()[i]);
+                        }
+
                     }
                 });
             }
         });
 
+    }
+
+    private String getCleanString(String cityLocation) {
+        cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
+        cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
+        cityLocation = cityLocation.toLowerCase();
+
+        return cityLocation;
+    }
+
+    private String formatDate(String date){
+        String[] splitted = date.trim().split("-");
+        String ans ="";
+        ans+=  splitted[0].length()==1? "0"+splitted[0]:splitted[0];
+        ans+="-";
+        ans+=  splitted[1].length()==1? "0"+splitted[1]:splitted[1];
+        ans+="-";
+        ans+=splitted[2];
+        return ans;
+    }
+
+    private String formatTime(String time){
+        String[] splitted = time.trim().split(":");
+        String ans ="";
+        ans+=  splitted[0].length()==1? "0"+splitted[0]:splitted[0];
+        ans+=":";
+        ans+=  splitted[1].length()==1? "0"+splitted[1]:splitted[1];
+        return ans;
     }
 
     public int toInt(String s){

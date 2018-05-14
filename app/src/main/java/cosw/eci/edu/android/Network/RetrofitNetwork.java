@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitNetwork implements Network {
 
-    public static final String BASE_URL = "http://10.2.67.51:8080/";//"https://searchat.herokuapp.com/";//
+    public static final String BASE_URL = "https://searchat.herokuapp.com/"; //"http://192.168.0.5:8080/";//
 
     private UserService userService;
     private EventService eventService;
@@ -226,13 +226,13 @@ public class RetrofitNetwork implements Network {
     }
 
     @Override
-    public void createEvent(final Event event,final RequestCallback<Boolean> requestCallback) {
+    public void createEvent(final Event event,final RequestCallback<Event> requestCallback) {
         backgroundExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                Call<Boolean> call = eventService.createEvent(event);
+                Call<Event> call = eventService.createEvent(event);
                 try{
-                    Response<Boolean> execute = call.execute();
+                    Response<Event> execute = call.execute();
                     requestCallback.onSuccess( execute.body() );
 
                 }catch ( Exception e )

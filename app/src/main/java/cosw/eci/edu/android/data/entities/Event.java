@@ -12,17 +12,17 @@ public class Event implements Serializable{
     private User administrator;
     private List<Lenguage> lenguages;
     private String location;
-    private LocalDateTime date;
+    private String date;
     private List<User> participants;
     private Long price;
     private double longitude;
     private double latitude;
-    private String exactLocation;
+
     private String image;
 
 
 
-    public Event(String name, String description, User administrator, List<Lenguage> lenguages, String location, LocalDateTime date, List<User> participants, Long price, double longitude, double latitude, String image) {
+    public Event(String name, String description, User administrator, List<Lenguage> lenguages, String location, String date, List<User> participants, Long price, double longitude, double latitude, String image) {
         this.name = name;
         this.description = description;
         this.administrator = administrator;
@@ -84,11 +84,11 @@ public class Event implements Serializable{
         this.location = location;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -108,13 +108,7 @@ public class Event implements Serializable{
         this.price = price;
     }
 
-    public String getExactLocation() {
-        return exactLocation;
-    }
 
-    public void setExactLocation(String exactLocation) {
-        this.exactLocation = exactLocation;
-    }
 
     public String getImage() {
         return image;
@@ -154,7 +148,6 @@ public class Event implements Serializable{
                 ", price=" + price +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
-                ", exactLocation='" + exactLocation + '\'' +
                 ", image='" + image + '\'' +
                 '}';
     }

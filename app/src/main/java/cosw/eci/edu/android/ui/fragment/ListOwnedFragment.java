@@ -43,11 +43,13 @@ import cosw.eci.edu.android.ui.adapter.EventAdapter;
  */
 public class ListOwnedFragment extends Fragment {
 
+    public static boolean NEED_TO_UPDATE = false;
 
     //view params
     private View rootView;
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
+
 
     //app params
     private Context context;
@@ -59,6 +61,7 @@ public class ListOwnedFragment extends Fragment {
     private Location location;
     private ListOwnedFragment fragment;
     private RetrofitNetwork retrofitNetwork;
+    private String cityLocation;
 
 
     private ListOwnedFragment.OnFragmentInteractionListener mListener;
@@ -98,7 +101,7 @@ public class ListOwnedFragment extends Fragment {
                 if (location != null) {
                     fragment.location = location;
                     //Clean the string
-                    String cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCityNameByLocation(location);
                     cityLocation = getCleanString(cityLocation);
                     locationManager.removeUpdates(locationListener);
                     //get username
@@ -222,5 +225,37 @@ public class ListOwnedFragment extends Fragment {
         cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
         cityLocation = cityLocation.toLowerCase();
         return cityLocation;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NEED_TO_UPDATE){
+            NEED_TO_UPDATE = false;
+            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+                @Override
+                public void onSuccess(List<Event> response) {
+                    events = response;
+                    if(events == null) events = new ArrayList<>();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            configureRecyclerView();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(NetworkException e) {
+                    System.out.println(e.getMessage()+ "---------------");
+                    for(StackTraceElement el : e.getStackTrace()){
+                        System.out.println(el.toString());
+                    }
+                    //getActivity().finish();
+                }
+            });
+
+        }
     }
 }

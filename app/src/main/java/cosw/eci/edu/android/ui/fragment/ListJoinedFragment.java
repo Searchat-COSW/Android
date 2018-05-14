@@ -50,6 +50,7 @@ public class ListJoinedFragment extends Fragment {
 
     private final static int REQUEST_CODE_FOR_LOCATION = 19;
     private final static int GPS_INTENT = 61;
+    public static boolean NEED_TO_UPDATE = false;
 
     //view params
     private View rootView;
@@ -66,6 +67,7 @@ public class ListJoinedFragment extends Fragment {
     private Location location;
     private ListJoinedFragment fragment;
     private RetrofitNetwork retrofitNetwork;
+    private String cityLocation;
 
 
     private ListJoinedFragment.OnFragmentInteractionListener mListener;
@@ -105,7 +107,7 @@ public class ListJoinedFragment extends Fragment {
                 if (location != null) {
                     fragment.location = location;
                     //Clean the string
-                    String cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCityNameByLocation(location);
                     cityLocation = getCleanString(cityLocation);
                     locationManager.removeUpdates(locationListener);
                     //get username
@@ -232,5 +234,36 @@ public class ListJoinedFragment extends Fragment {
         cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
         cityLocation = cityLocation.toLowerCase();
         return cityLocation;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (NEED_TO_UPDATE){
+            NEED_TO_UPDATE = false;
+            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+                @Override
+                public void onSuccess(List<Event> response) {
+                    events = response;
+                    if(events == null) events = new ArrayList<>();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            configureRecyclerView();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed(NetworkException e) {
+                    System.out.println(e.getMessage()+ "---------------");
+                    for(StackTraceElement el : e.getStackTrace()){
+                        System.out.println(el.toString());
+                    }
+                    //getActivity().finish();
+                }
+            });
+
+        }
     }
 }
