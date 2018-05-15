@@ -77,4 +77,10 @@
     <string name="title_activity_maps">Map</string>
     <string name="new_event_ubication">Ubication</string>
 
+    <!-- String for ShowEventActivity -->
+    <string name="show_activity_name"></string>
+    <string name="show_activity_location"></string>
+    <string name="show_activity_administrator"></string>
+    <string name="show_activity_description"></string>
+
 </resources>
