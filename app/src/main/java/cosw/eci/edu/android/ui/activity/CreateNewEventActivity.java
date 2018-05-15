@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -45,6 +47,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.Normalizer;
@@ -68,6 +71,9 @@ import cosw.eci.edu.android.data.entities.Lenguage;
 import cosw.eci.edu.android.data.entities.User;
 import cosw.eci.edu.android.ui.fragment.ListAllFragment;
 import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class CreateNewEventActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private int mYear, mMonth, mDay, mHour, mMinute;
@@ -264,11 +270,13 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                     List<Address> addresses = geo.getFromLocationName(ubicationValue.getText().toString(), 1);
                     /*for (int i=0; i<addresses.size();i++){
                         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!! "+i+" "+addresses.get(i));
+                        System.out.println(addresses.get(i).getAddressLine(0).split(",")[1].trim());
                     }*/
                     if (!addresses.isEmpty()) {
                         googleMap.clear();
                         Address exactUbicaion = addresses.get(0);
-                        location = exactUbicaion.getLocality();
+                        location = exactUbicaion.getAddressLine(0).split(",")[1].trim();
+                        System.out.println("--------------------------"+ location + " " + location.length());
                         longitude = exactUbicaion.getLongitude();
                         latitude = exactUbicaion.getLatitude();
                         Location targetLocation = new Location(ubicationValue.getText().toString());//provider name is unnecessary
@@ -313,7 +321,39 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                     public void onSuccess(Event response) {
                         ListAllFragment.NEED_TO_UPDATE = true;
                         ListOwnedFragment.NEED_TO_UPDATE = true;
-                        finish();
+                        //finish();
+                        //uploading the image
+                        try {
+                            //create a new file
+                            File imageFile = createImageFile();
+                            //save the image in the file
+                            BitmapDrawable draw = (BitmapDrawable) image.getDrawable();
+                            Bitmap bitmap = draw.getBitmap();
+                            FileOutputStream outStream = null;
+                            File sdCard = Environment.getExternalStorageDirectory();
+                            outStream = new FileOutputStream(imageFile);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                            outStream.flush();
+                            outStream.close();
+                            // create RequestBody instance from file
+                            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
+                            MultipartBody.Part body =
+                                    MultipartBody.Part.createFormData("uploaded_file", imageFile.getName(), requestFile);
+
+                            retrofitNetwork.updateImagEvent(response.getId(),body, new Network.RequestCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean response) {
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFailed(NetworkException e) {
+                                    finish();
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
@@ -329,6 +369,7 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
         });
 
     }
+
 
     private String getCleanString(String cityLocation) {
         cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);

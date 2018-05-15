@@ -244,6 +244,25 @@ public class RetrofitNetwork implements Network {
         });
     }
 
+    @Override
+    public void updateImagEvent(final int activityId, final MultipartBody.Part file,final  RequestCallback<Boolean> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<Boolean> call = eventService.createImageEvent(activityId,file);
+                try{
+                    Response<Boolean> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+
+            }
+        });
+    }
+
 
     public void addSecureTokenInterceptor( final String token )
     {

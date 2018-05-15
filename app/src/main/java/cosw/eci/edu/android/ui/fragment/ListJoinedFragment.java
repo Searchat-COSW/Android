@@ -57,6 +57,7 @@ public class ListJoinedFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
 
+    private String username;
     //app params
     private Context context;
     private List<Event> events;
@@ -113,7 +114,7 @@ public class ListJoinedFragment extends Fragment {
                     //get username
                     String defaultValue = getResources().getString(R.string.default_access);
                     SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-                    String username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
+                    username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
                     //consult  by username
                     retrofitNetwork.getEventsJoined(username,new Network.RequestCallback<List<Event>>() {
                         @Override
@@ -218,6 +219,8 @@ public class ListJoinedFragment extends Fragment {
 
     private String getCityNameByLocation(Location location) {
         String fnialAddress ="";
+        /*System.out.println((getActivity() != null) + "----------------------------");
+        System.out.println((Locale.getDefault() != null )+ "----------------------------");*/
         Geocoder geoCoder = new Geocoder(getActivity(), Locale.getDefault()); //it is Geocoder
         try {
             List<Address> address = geoCoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -241,7 +244,7 @@ public class ListJoinedFragment extends Fragment {
         super.onResume();
         if (NEED_TO_UPDATE){
             NEED_TO_UPDATE = false;
-            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+            retrofitNetwork.getEventsJoined(username,new Network.RequestCallback<List<Event>>() {
                 @Override
                 public void onSuccess(List<Event> response) {
                     events = response;

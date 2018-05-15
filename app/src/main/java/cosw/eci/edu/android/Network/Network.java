@@ -31,6 +31,8 @@ public interface Network {
 
     void createEvent(Event event,RequestCallback<Event> requestCallback);
 
+    void updateImagEvent(int activityId, MultipartBody.Part file, RequestCallback<Boolean> requestCallback);
+
 
 
 

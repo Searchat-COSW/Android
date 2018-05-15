@@ -38,9 +38,9 @@ import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
 
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    ListAllFragment.OnFragmentInteractionListener,
-                    ListOwnedFragment.OnFragmentInteractionListener,
-                    ListJoinedFragment.OnFragmentInteractionListener {
+        ListAllFragment.OnFragmentInteractionListener,
+        ListOwnedFragment.OnFragmentInteractionListener,
+        ListJoinedFragment.OnFragmentInteractionListener {
 
 
     public static String PASS_USER = "pass_user";
@@ -61,16 +61,17 @@ public class BaseActivity extends AppCompatActivity
     private Activity activity;
     //User data
     private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         activity = this;
         //ask if he has already logged in
-        sharedPref = getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
         defaultValue = getResources().getString(R.string.default_access);
         accessToken = sharedPref.getString(getString(R.string.saved_access_token), defaultValue);
-        if(accessToken.equals( getResources().getString(R.string.default_access))){
+        if (accessToken.equals(getResources().getString(R.string.default_access))) {
             //login for the first time
             Intent intent = new Intent(this, LoginActivity.class);
             //Start the new activity using the intent.
@@ -84,8 +85,6 @@ public class BaseActivity extends AppCompatActivity
         retrofitNetwork = new RetrofitNetwork();
 
 
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -95,8 +94,8 @@ public class BaseActivity extends AppCompatActivity
             public void onClick(View view) {
                 Intent newEvent = new Intent(activity, CreateNewEventActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(BaseActivity.PASS_USER_OBJECT,user);
-                newEvent.putExtra(BaseActivity.PASS_USER,bundle);
+                bundle.putSerializable(BaseActivity.PASS_USER_OBJECT, user);
+                newEvent.putExtra(BaseActivity.PASS_USER, bundle);
                 startActivity(newEvent);
             }
         });
@@ -112,7 +111,7 @@ public class BaseActivity extends AppCompatActivity
 
         //ViewPager section
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        PagerAdapter pagerAdapter = new FixedTabsPagerAdapter(getSupportFragmentManager(),this);
+        PagerAdapter pagerAdapter = new FixedTabsPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -123,9 +122,9 @@ public class BaseActivity extends AppCompatActivity
         setUpUsername();
     }
 
-    private void setUpUsername(){
-        username = sharedPref.getString(getString(R.string.saved_username),defaultValue);
-        if(!username.equals(defaultValue)) {
+    private void setUpUsername() {
+        username = sharedPref.getString(getString(R.string.saved_username), defaultValue);
+        if (!username.equals(defaultValue)) {
             View headerView = navigationView.getHeaderView(0);
             TextView navUsernameView = (TextView) headerView.findViewById(R.id.nav_header_username);
             navUsernameView.setText(username);
@@ -144,7 +143,7 @@ public class BaseActivity extends AppCompatActivity
                                 TextView navUserEmailView = (TextView) headerView.findViewById(R.id.nav_header_email);
                                 navUserEmailView.setText(user.getEmail());
                                 final ImageView image = (ImageView) headerView.findViewById(R.id.nav_header_image);
-                                Picasso.with(activity).load(RetrofitNetwork.BASE_URL+"user/"+username+"/image").into(image, new Callback() {
+                                Picasso.with(activity).load(RetrofitNetwork.BASE_URL + "user/" + username + "/image").into(image, new Callback() {
                                     @Override
                                     public void onSuccess() {
 
@@ -209,10 +208,24 @@ public class BaseActivity extends AppCompatActivity
         if (id == R.id.nav_editProfile) {
             Intent intent = new Intent(this, EditProfileInformationActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putSerializable(BaseActivity.PASS_USER_OBJECT,user);
-            intent.putExtra(BaseActivity.PASS_USER,bundle);
+            bundle.putSerializable(BaseActivity.PASS_USER_OBJECT, user);
+            intent.putExtra(BaseActivity.PASS_USER, bundle);
             startActivity(intent);
         } else if (id == R.id.nav_signOut) {
+
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString(getString(R.string.saved_access_token), defaultValue);
+            editor.putString(getString(R.string.saved_username), defaultValue);
+            editor.commit();
+
+            //login for the first time
+            Intent intent = new Intent(this, LoginActivity.class);
+            //Start the new activity using the intent.
+            startActivity(intent);
+            //delete the current activity from the stack
+            finish();
+
 
         }
 

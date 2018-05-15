@@ -50,6 +50,7 @@ public class ListOwnedFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
 
+    String username;
 
     //app params
     private Context context;
@@ -107,7 +108,7 @@ public class ListOwnedFragment extends Fragment {
                     //get username
                     String defaultValue = getResources().getString(R.string.default_access);
                     SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-                    String username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
+                    username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
                     //consult  by username
                     retrofitNetwork.getEventsOwned(username,new Network.RequestCallback<List<Event>>() {
                         @Override
@@ -233,7 +234,7 @@ public class ListOwnedFragment extends Fragment {
         super.onResume();
         if (NEED_TO_UPDATE){
             NEED_TO_UPDATE = false;
-            retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+            retrofitNetwork.getEventsOwned(username,new Network.RequestCallback<List<Event>>() {
                 @Override
                 public void onSuccess(List<Event> response) {
                     events = response;
