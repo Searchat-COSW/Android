@@ -99,11 +99,16 @@ public class ListAllFragment extends Fragment {
         fragment = this;
         events = new ArrayList<>();
         retrofitNetwork = new RetrofitNetwork();
-
         //obtain the location
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         checkLocationPermissons();
         // Define a listener that responds to location updates
+        getLocationListener();
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+    }
+
+    private void getLocationListener() {
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (location != null) {
@@ -124,7 +129,6 @@ public class ListAllFragment extends Fragment {
                                 }
                             });
                         }
-
                         @Override
                         public void onFailed(NetworkException e) {
                             System.out.println(e.getMessage()+ "---------------");
@@ -135,14 +139,11 @@ public class ListAllFragment extends Fragment {
                         }
                     });
                 }
-
-
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
 
             public void onProviderEnabled(String provider) {
-
 
             }
 
@@ -150,8 +151,6 @@ public class ListAllFragment extends Fragment {
 
             }
         };
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
     }
 
     @NonNull
@@ -159,7 +158,6 @@ public class ListAllFragment extends Fragment {
         cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
         cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
         cityLocation = cityLocation.toLowerCase();
-
         return cityLocation;
     }
 
@@ -176,12 +174,14 @@ public class ListAllFragment extends Fragment {
 
 
     private void checkLocationPermissons(){
+
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             }, REQUEST_CODE_FOR_LOCATION);
         }
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(intent, GPS_INTENT);
         }
@@ -313,7 +313,6 @@ public class ListAllFragment extends Fragment {
                     for(StackTraceElement el : e.getStackTrace()){
                         System.out.println(el.toString());
                     }
-                    //getActivity().finish();
                 }
             });
 

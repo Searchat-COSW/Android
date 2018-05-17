@@ -33,9 +33,6 @@ public interface Network {
 
     void updateImagEvent(int activityId, MultipartBody.Part file, RequestCallback<Boolean> requestCallback);
 
-
-
-
     interface RequestCallback<T>
     {
 

@@ -29,7 +29,6 @@ public interface EventService {
     @POST( "activity/create")
     Call<Event> createEvent(@Body Event event);
 
-
     @Multipart
     @POST( "activity/{activityId}/image")
     Call<Boolean> createImageEvent(@Path("activityId") int activityId, @Part MultipartBody.Part file);

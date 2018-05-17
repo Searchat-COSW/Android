@@ -64,7 +64,12 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("casdsasadcsadsa");
         super.onCreate(savedInstanceState);
+
+        ListAllFragment.NEED_TO_UPDATE = true;
+        ListOwnedFragment.NEED_TO_UPDATE = true;
+
         setContentView(R.layout.activity_base);
         activity = this;
         //ask if he has already logged in

@@ -276,7 +276,6 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                         googleMap.clear();
                         Address exactUbicaion = addresses.get(0);
                         location = exactUbicaion.getAddressLine(0).split(",")[1].trim();
-                        System.out.println("--------------------------"+ location + " " + location.length());
                         longitude = exactUbicaion.getLongitude();
                         latitude = exactUbicaion.getLatitude();
                         Location targetLocation = new Location(ubicationValue.getText().toString());//provider name is unnecessary
@@ -312,8 +311,6 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                 Long priceEvent =  new Long(price.getText().toString());
 
 
-
-
                 Event newEvent = new Event(name.getText().toString(),description.getText().toString(),user,lenguagesList,getCleanString(location),formatDate(textViewDate.getText().toString())+" "+formatTime(textViewTime.getText().toString()),new ArrayList<User>(), priceEvent, longitude,latitude,null);
                 System.out.println(newEvent);
                 retrofitNetwork.createEvent(newEvent, new Network.RequestCallback<Event>() {
@@ -321,7 +318,7 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                     public void onSuccess(Event response) {
                         ListAllFragment.NEED_TO_UPDATE = true;
                         ListOwnedFragment.NEED_TO_UPDATE = true;
-                        //finish();
+                        finish();
                         //uploading the image
                         try {
                             //create a new file
@@ -339,10 +336,12 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
                             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageFile);
                             MultipartBody.Part body =
                                     MultipartBody.Part.createFormData("uploaded_file", imageFile.getName(), requestFile);
-
                             retrofitNetwork.updateImagEvent(response.getId(),body, new Network.RequestCallback<Boolean>() {
                                 @Override
                                 public void onSuccess(Boolean response) {
+                                    Intent intent = new Intent(context, BaseActivity.class);
+                                    //Start the new activity using the intent.
+                                    startActivity(intent);
                                     finish();
                                 }
 
@@ -358,11 +357,8 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
 
                     @Override
                     public void onFailed(NetworkException e) {
-                        System.out.println(e.getMessage());
-                        for(int i=0;i<e.getStackTrace().length;i++){
-                            System.out.println(e.getStackTrace()[i]);
-                        }
-
+                        System.out.println("ERROR");
+                        finish();
                     }
                 });
             }
@@ -491,7 +487,6 @@ public class CreateNewEventActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        System.out.println(requestCode + " " + resultCode + " ");
         switch (requestCode) {
             case SELECT_IMAGE:
                 if (resultCode == RESULT_OK) {
