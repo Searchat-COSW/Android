@@ -263,6 +263,25 @@ public class RetrofitNetwork implements Network {
         });
     }
 
+    @Override
+    public void joinEvent(final int activityId, final String username, final RequestCallback<Boolean> requestCallback) {
+        backgroundExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Call<Boolean> call = eventService.joinEvent(activityId,username);
+                try{
+                    Response<Boolean> execute = call.execute();
+                    requestCallback.onSuccess( execute.body() );
+
+                }catch ( Exception e )
+                {
+                    requestCallback.onFailed( new NetworkException( null, e ) );
+                }
+
+            }
+        });
+    }
+
     public void addSecureTokenInterceptor( final String token )
     {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

@@ -82,5 +82,6 @@
     <string name="show_activity_location"></string>
     <string name="show_activity_administrator"></string>
     <string name="show_activity_description"></string>
+    <string name="join_activity">Join Activity</string>
 
 </resources>

@@ -136,11 +136,11 @@
                 android:id="@+id/event_join_or_remove_"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
-                android:text="Button"
-                android:textColor="@color/cardview_light_background"
-                android:layout_marginBottom="10dp"/>
+                android:text="@string/join_activity"
+                android:textColor="@color/cardview_light_background" />
 
         </LinearLayout>
 

@@ -32,4 +32,7 @@ public interface EventService {
     @Multipart
     @POST( "activity/{activityId}/image")
     Call<Boolean> createImageEvent(@Path("activityId") int activityId, @Part MultipartBody.Part file);
+
+    @POST( "activity/join/{activityId}")
+    Call<Boolean> joinEvent(@Path("activityId") int activityId, @Body String username);
 }
