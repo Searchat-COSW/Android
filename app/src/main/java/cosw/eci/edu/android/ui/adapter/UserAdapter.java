@@ -20,6 +20,7 @@ import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
 import cosw.eci.edu.android.data.entities.User;
 import cosw.eci.edu.android.ui.activity.ShowEventActivity;
+import cosw.eci.edu.android.ui.activity.ShowUser;
 
 /**
  * Created by 2105409 on 5/17/18.
@@ -82,10 +83,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     //login for the first time
-                    //Intent intent = new Intent(activity, ShowUserActivity.class);
-                    //intent.putExtra(ShowEventActivity.EVENT_OBJECT,user);
+                    Intent intent = new Intent(activity, ShowUser.class);
+                    intent.putExtra(ShowUser.USER_OBJECT,user);
                     //Start the new activity using the intent.
-                    //activity.startActivity(intent);
+                    activity.startActivity(intent);
                 }
             });
         }

@@ -41,7 +41,9 @@
             android:name=".ui.activity.CreateNewEventActivity"
             android:parentActivityName=".ui.activity.BaseActivity" />
         />
-        <activity android:name=".ui.activity.ShowEventActivity" />
+        <activity android:name=".ui.activity.ShowEventActivity"
+            android:parentActivityName=".ui.activity.BaseActivity"
+            />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -57,7 +59,8 @@
         <activity
             android:name=".ui.activity.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".ui.activity.showUser"></activity>
+
+        <activity android:name=".ui.activity.ShowUser"/>
     </application>
 
 </manifest>

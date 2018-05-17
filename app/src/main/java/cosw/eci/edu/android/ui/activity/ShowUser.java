@@ -14,7 +14,9 @@ import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Lenguage;
 import cosw.eci.edu.android.data.entities.User;
 
-public class showUser extends AppCompatActivity {
+public class ShowUser extends AppCompatActivity {
+
+    public static final String USER_OBJECT = "user_object";
 
     private User user;
     private ImageView imageView;
@@ -29,7 +31,7 @@ public class showUser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        //user = (User) getIntent().getSerializableExtra()
+        user = (User) getIntent().getSerializableExtra(USER_OBJECT);
 
         //initializate variable
         imageView = (ImageView) findViewById(R.id.user_picture);
@@ -51,7 +53,11 @@ public class showUser extends AppCompatActivity {
         List<Lenguage> lenguagueList = user.getProfileInformation().getLanguages();
         String allLenguages = "";
         for(int i = 0; i < lenguagueList.size(); i++){
-            allLenguages += lenguagueList.get(i).getLenguage()+", ";
+            if(i+1!=lenguagueList.size()){
+                allLenguages += lenguagueList.get(i).getLenguage()+", ";
+            }else{
+                allLenguages += lenguagueList.get(i).getLenguage();
+            }
         }
         languaguesView.setText(allLenguages);
 

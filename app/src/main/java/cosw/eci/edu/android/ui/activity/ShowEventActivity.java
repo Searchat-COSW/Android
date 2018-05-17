@@ -115,7 +115,6 @@ public class ShowEventActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        System.out.println("EN EL METODO");
         addMarkerAndZoom(event.getName(),15);
 
     }
