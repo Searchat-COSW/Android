@@ -1,8 +1,11 @@
 package cosw.eci.edu.android.ui.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -10,7 +13,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +48,8 @@ import cosw.eci.edu.android.ui.adapter.EventAdapter;
  */
 public class ListOwnedFragment extends Fragment {
 
+    private final static int REQUEST_CODE_FOR_LOCATION = 19;
+    private final static int GPS_INTENT = 61;
     public static boolean NEED_TO_UPDATE = false;
 
     //view params
@@ -95,60 +102,37 @@ public class ListOwnedFragment extends Fragment {
         // Define a listener that responds to location updates
         fragment = this;
         //obtain the location
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    fragment.location = location;
-                    //Clean the string
-                    cityLocation = getCityNameByLocation(location);
-                    cityLocation = getCleanString(cityLocation);
-                    locationManager.removeUpdates(locationListener);
-                    //get username
-                    String defaultValue = getResources().getString(R.string.default_access);
-                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-                    username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
-                    //consult  by username
-                    retrofitNetwork.getEventsOwned(username,new Network.RequestCallback<List<Event>>() {
-                        @Override
-                        public void onSuccess(List<Event> response) {
-                            events = response;
-                            if(events == null) events = new ArrayList<>();
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    configureRecyclerView();
-                                }
-                            });
-                        }
+        //obtain the location
+        extractLocation();
 
-                        @Override
-                        public void onFailed(NetworkException e) {
-                            System.out.println(e.getMessage()+ "---------------");
-                            for(StackTraceElement el : e.getStackTrace()){
-                                System.out.println(el.toString());
-                            }
-                            //getActivity().finish();
-                        }
-                    });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_FOR_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    extractLocation();
                 }
+                return;
+        }
+    }
 
+    private boolean checkLocationPermissons(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+            }, REQUEST_CODE_FOR_LOCATION);
+            return false;
+        }
+        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-            }
+            startActivityForResult(intent, GPS_INTENT);
+            return false;
+        }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {
-
-
-            }
-
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        return true;
 
     }
 
@@ -257,6 +241,67 @@ public class ListOwnedFragment extends Fragment {
                 }
             });
 
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void extractLocation() {
+        System.out.println("-------------------------> extract");
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        checkLocationPermissons();
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    fragment.location = location;
+                    //Clean the string
+                    cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCleanString(cityLocation);
+                    locationManager.removeUpdates(locationListener);
+                    retrofitNetwork.getEventsByLocation(cityLocation, new Network.RequestCallback<List<Event>>() {
+                        @Override
+                        public void onSuccess(List<Event> response) {
+                            events = response;
+                            if (events == null) events = new ArrayList<>();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    configureRecyclerView();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(NetworkException e) {
+                            System.out.println(e.getMessage() + "---------------");
+                            for (StackTraceElement el : e.getStackTrace()) {
+                                System.out.println(el.toString());
+                            }
+                            //getActivity().finish();
+                        }
+                    });
+                }
+
+
+
+
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+
+
+            }
+
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if(checkLocationPermissons()){
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
     }
 }

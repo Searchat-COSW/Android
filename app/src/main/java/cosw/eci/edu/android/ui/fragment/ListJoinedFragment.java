@@ -101,61 +101,36 @@ public class ListJoinedFragment extends Fragment {
         // Define a listener that responds to location updates
         fragment = this;
         //obtain the location
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    fragment.location = location;
-                    //Clean the string
-                    cityLocation = getCityNameByLocation(location);
-                    cityLocation = getCleanString(cityLocation);
-                    locationManager.removeUpdates(locationListener);
-                    //get username
-                    String defaultValue = getResources().getString(R.string.default_access);
-                    SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.shared_preferences),Context.MODE_PRIVATE);
-                    username= sharedPref.getString(getString(R.string.saved_username),defaultValue);
-                    //consult  by username
-                    retrofitNetwork.getEventsJoined(username,new Network.RequestCallback<List<Event>>() {
-                        @Override
-                        public void onSuccess(List<Event> response) {
-                            events = response;
-                            if(events == null) events = new ArrayList<>();
+        extractLocation();
 
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    configureRecyclerView();
-                                }
-                            });
-                        }
+    }
 
-                        @Override
-                        public void onFailed(NetworkException e) {
-                            System.out.println(e.getMessage()+ "---------------");
-                            for(StackTraceElement el : e.getStackTrace()){
-                                System.out.println(el.toString());
-                            }
-                            //getActivity().finish();
-                        }
-                    });
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_FOR_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    extractLocation();
                 }
+                return;
+        }
+    }
 
+    private boolean checkLocationPermissons(){
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+            }, REQUEST_CODE_FOR_LOCATION);
+            return false;
+        }
+        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-            }
+            startActivityForResult(intent, GPS_INTENT);
+            return false;
+        }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {
-
-
-            }
-
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        return true;
 
     }
 
@@ -267,6 +242,67 @@ public class ListJoinedFragment extends Fragment {
                 }
             });
 
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void extractLocation() {
+        System.out.println("-------------------------> extract");
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        checkLocationPermissons();
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    fragment.location = location;
+                    //Clean the string
+                    cityLocation = getCityNameByLocation(location);
+                    cityLocation = getCleanString(cityLocation);
+                    locationManager.removeUpdates(locationListener);
+                    retrofitNetwork.getEventsByLocation(cityLocation, new Network.RequestCallback<List<Event>>() {
+                        @Override
+                        public void onSuccess(List<Event> response) {
+                            events = response;
+                            if (events == null) events = new ArrayList<>();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    configureRecyclerView();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(NetworkException e) {
+                            System.out.println(e.getMessage() + "---------------");
+                            for (StackTraceElement el : e.getStackTrace()) {
+                                System.out.println(el.toString());
+                            }
+                            //getActivity().finish();
+                        }
+                    });
+                }
+
+
+
+
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+
+
+            }
+
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if(checkLocationPermissons()){
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
         }
     }
 }
