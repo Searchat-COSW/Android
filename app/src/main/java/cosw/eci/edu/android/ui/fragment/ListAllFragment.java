@@ -51,6 +51,8 @@ public class ListAllFragment extends Fragment {
 
     private final static int REQUEST_CODE_FOR_LOCATION = 18;
     private final static int GPS_INTENT = 60;
+
+    private static boolean NEED_LOCATION_STAR = false;
     public static boolean NEED_TO_UPDATE = false;
     //view params
     private View rootView;
@@ -99,16 +101,20 @@ public class ListAllFragment extends Fragment {
         fragment = this;
         events = new ArrayList<>();
         retrofitNetwork = new RetrofitNetwork();
+
         //obtain the location
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        checkLocationPermissons();
-        // Define a listener that responds to location updates
-        getLocationListener();
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        extractLocation();
+
+
 
     }
 
-    private void getLocationListener() {
+    @SuppressLint("MissingPermission")
+    private void extractLocation() {
+        System.out.println("-------------------------> extract");
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        checkLocationPermissons();
+        // Define a listener that responds to location updates
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (location != null) {
@@ -117,11 +123,11 @@ public class ListAllFragment extends Fragment {
                     cityLocation = getCityNameByLocation(location);
                     cityLocation = getCleanString(cityLocation);
                     locationManager.removeUpdates(locationListener);
-                    retrofitNetwork.getEventsByLocation(cityLocation,new Network.RequestCallback<List<Event>>() {
+                    retrofitNetwork.getEventsByLocation(cityLocation, new Network.RequestCallback<List<Event>>() {
                         @Override
                         public void onSuccess(List<Event> response) {
                             events = response;
-                            if(events == null) events = new ArrayList<>();
+                            if (events == null) events = new ArrayList<>();
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -129,21 +135,28 @@ public class ListAllFragment extends Fragment {
                                 }
                             });
                         }
+
                         @Override
                         public void onFailed(NetworkException e) {
-                            System.out.println(e.getMessage()+ "---------------");
-                            for(StackTraceElement el : e.getStackTrace()){
+                            System.out.println(e.getMessage() + "---------------");
+                            for (StackTraceElement el : e.getStackTrace()) {
                                 System.out.println(el.toString());
                             }
                             //getActivity().finish();
                         }
                     });
                 }
+
+
+
+
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
             public void onProviderEnabled(String provider) {
+
 
             }
 
@@ -151,6 +164,10 @@ public class ListAllFragment extends Fragment {
 
             }
         };
+        if(checkLocationPermissons()){
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+        }
     }
 
     @NonNull
@@ -158,6 +175,7 @@ public class ListAllFragment extends Fragment {
         cityLocation = Normalizer.normalize(cityLocation, Normalizer.Form.NFD);
         cityLocation = cityLocation.replaceAll("[^\\p{ASCII}]", "");
         cityLocation = cityLocation.toLowerCase();
+
         return cityLocation;
     }
 
@@ -166,31 +184,33 @@ public class ListAllFragment extends Fragment {
         switch (requestCode) {
             case REQUEST_CODE_FOR_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    checkLocationPermissons();
+                    extractLocation();
                 }
                 return;
         }
     }
 
 
-    private void checkLocationPermissons(){
-
+    private boolean checkLocationPermissons(){
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             }, REQUEST_CODE_FOR_LOCATION);
+            return false;
         }
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+
             startActivityForResult(intent, GPS_INTENT);
+            return false;
         }
 
+        return true;
 
     }
 
     @Override
-     public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode){
             case GPS_INTENT:
                 checkLocationPermissons();
@@ -313,9 +333,12 @@ public class ListAllFragment extends Fragment {
                     for(StackTraceElement el : e.getStackTrace()){
                         System.out.println(el.toString());
                     }
+                    //getActivity().finish();
                 }
             });
 
         }
     }
+
+
 }
