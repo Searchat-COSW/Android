@@ -1,12 +1,14 @@
 package cosw.eci.edu.android.ui.activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,12 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cosw.eci.edu.android.Network.Network;
+import cosw.eci.edu.android.Network.NetworkException;
 import cosw.eci.edu.android.Network.RetrofitNetwork;
 import cosw.eci.edu.android.R;
 import cosw.eci.edu.android.data.entities.Event;
 import cosw.eci.edu.android.data.entities.User;
 import cosw.eci.edu.android.ui.adapter.EventAdapter;
 import cosw.eci.edu.android.ui.adapter.UserAdapter;
+import cosw.eci.edu.android.ui.fragment.ListAllFragment;
+import cosw.eci.edu.android.ui.fragment.ListJoinedFragment;
+import cosw.eci.edu.android.ui.fragment.ListOwnedFragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -49,6 +56,7 @@ public class ShowEventActivity extends AppCompatActivity implements OnMapReadyCa
     private TextView dateView;
     private TextView priceView;
     private TextView locationView;
+    private Button joinOrRemoveButton;
     private TextView administratorView;
     private TextView descriptionView;
     private RetrofitNetwork retrofitNetwork;
@@ -76,6 +84,9 @@ public class ShowEventActivity extends AppCompatActivity implements OnMapReadyCa
         //administratorView = (TextView) findViewById(R.id.event_administrator);
         descriptionView = (TextView) findViewById(R.id.event_description);
         listParticipants = (RecyclerView) findViewById(R.id.listParticipants);
+        joinOrRemoveButton = (Button) findViewById(R.id.event_join_or_remove_);
+
+        retrofitNetwork = new RetrofitNetwork();
 
         //set variables
         Picasso.with(this).load(RetrofitNetwork.BASE_URL+"activity/"+event.getId()+"/image").into(imageView);
@@ -88,6 +99,30 @@ public class ShowEventActivity extends AppCompatActivity implements OnMapReadyCa
 
         configureAdminRecyclerView();
         configureRecyclerView();
+
+        joinOrRemoveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ask if he has already logged in
+                SharedPreferences sharedPref = getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE);
+                String username = sharedPref.getString(getString(R.string.saved_username), getResources().getString(R.string.default_access));
+                System.out.println("PARTITICANTTTTTTTTTTTTTTTTTTTTTTT " + username);
+                retrofitNetwork.joinEvent(event.getId(), username, new Network.RequestCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean response) {
+                        System.out.println("PARTITICANTTTTTTTTTTTTTTTTTTTTTTT " + response);
+                        ListAllFragment.NEED_TO_UPDATE = true;
+                        ListJoinedFragment.NEED_TO_UPDATE = true;
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailed(NetworkException e) {
+                        finish();
+                    }
+                });
+            }
+        });
 
     }
 
