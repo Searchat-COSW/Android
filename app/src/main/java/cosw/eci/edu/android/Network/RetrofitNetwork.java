@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitNetwork implements Network {
 
-    public static final String BASE_URL = "https://searchat.herokuapp.com/";
+    public static final String BASE_URL = "http://40.114.104.64:8080/";
 
     private UserService userService;
     private EventService eventService;
